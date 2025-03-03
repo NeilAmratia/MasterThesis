@@ -1,0 +1,60 @@
+features
+    BodyComfortSystem 
+        mandatory 
+            HumanMachineInterface 
+                mandatory 
+                    StatusLED
+                        or
+                            LEDAlarmSystem
+                            LEDFingerProtection
+                            LEDCentralLockingSystem
+                            LEDPowerWindow
+                            LEDExteriorMirror
+                            LEDHeatable
+            
+        
+        mandatory 
+            DoorSystem 
+                mandatory 
+                    PowerWindow 
+                        mandatory 
+                            FingerProtection
+                        alternative
+                                ManualPowerWindow
+                                AutomaticPowerWindow
+                
+                mandatory 
+                    ExteriorMirror 
+                        mandatory 
+                            Electric
+                        optional 
+                            Heatable
+            
+    
+        mandatory 
+            Security 
+                optional 
+                    AlarmSystem 
+                        optional 
+                            InteriorMonitoring
+                
+                optional 
+                    CentralLockingSystem 
+                        optional 
+                            AutomaticLocking
+                
+                optional 
+                    RemoteControlKey
+                        optional
+                            ControlAlarmSystem
+                            SafetyFunction
+                            ControlAutomaticPowerWindow
+                            AdjustExteriorMirror
+            
+constraints
+    LEDAlarmSystem => AlarmSystem
+    LEDCentralLockingSystem => CentralLockingSystem
+    LEDHeatable => Heatable
+    ControlAlarmSystem => AlarmSystem
+    RemoteControlKey => CentralLockingSystem
+    ManualPowerWindow => !ControlAutomaticPowerWindow

@@ -1,0 +1,207 @@
+# Body Control System (BCS) Features and Variants
+
+Body Comfort System is the root feature and is a abstract under which all the features are present.
+Under Body Comfort System features Human Machine Interface, Door System and Security are present.
+Door System and Security are abstract features, that means that they do not contain any functionality that requires testing.
+Door System again contains features Power Window and Exterior Mirror which are both again abstract features.
+Security contains features Alarm System, Central Locking System and Remote Control Key.
+HMI contains feature Status LED, which is an abstract feature.
+Status LED contains 6 features: LED Power Window, LED Exterior Mirror, LED Alarm System, LED Finger Protection ,LED Central Locking System and LED Heatable.
+
+## 1. Power Window Features
+
+Power Window Feature contains feature Manual Power Window, Automatic Power Window and Finger Protection.
+
+### 1.1 Manual Power Window (ManPW)
+- **Standard Component**: Controls basic window movement
+- **Input Signals**: 
+  - pw_but_dn: Controls downward movement
+  - pw_but_up: Controls upward movement
+  - pw_pos_up: Indicates upper window position
+  - pw_pos_dn: Indicates lower window position
+  - fp_on: Stops/disables upward movement
+  - fp_off: Re-enables upward movement
+- **Output Signals**:
+  - pw_mv_up: Represents upward movement
+  - pw_mv_dn: Represents downward movement
+- **Variant (with Central Locking System)**:
+  - Additional functionality: Window movement is stopped/disabled by car locking and re-enabled by unlocking
+  - Additional inputs: cls_lock, cls_unlock
+
+### 1.2 Automatic Power Window (AutoPW)
+- **Standard Component**: Controls automated window movement
+- **Input Signals**:
+  - pw_but_dn: Controls automated downward movement
+  - pw_but_up: Controls automated upward movement
+  - pw_pos_up: Indicates upper window position
+  - pw_pos_dn: Indicates lower window position
+  - fp_on: Stops/disables upward movement
+  - fp_off: Re-enables upward movement
+- **Output Signals**:
+  - pw_auto_mv_up: Represents automated upward movement
+  - pw_auto_mv_dn: Represents automated downward movement
+  - pw_auto_mv_stop: Stops automated movement
+- **Variant (with Central Locking System)**:
+  - Additional functionality: Window movement is stopped/disabled by car locking and re-enabled by unlocking
+  - Additional inputs: cls_lock, cls_unlock
+
+### 1.3 Finger Protection (FP)
+- **Standard Component**: Controls window movement safety
+- **Input Signals**:
+  - finger_detected: Detects clamped finger
+  - pw_but_dn: Releases finger based on downward movement
+- **Output Signals**:
+  - fp_on: Activates finger protection
+  - fp_off: Deactivates finger protection
+- No variants
+
+## 2. Exterior Mirror Features
+
+Exterior Mirror Feature contains feature Exterior Mirror and Heatable.
+
+### 2.1 Exterior Mirror (EM)
+- **Standard Component**: Controls mirror movement
+- **Base Input Signals**:
+  - Movement controls: em_but_right, em_but_down, em_but_up, em_but_left
+  - Position indicators: em_pos_left, em_pos_right, em_pos_top, em_pos_bottom
+- **Base Output Signals**:
+  - Movement actions: em_mv_left, em_mv_right, em_mv_up, em_mv_down
+
+**Variants**:
+1. **With Heatable Feature**:
+   - Additional inputs: em_too_cold, time_heating_elapsed
+   - Additional outputs: heating_off, heating_on
+
+2. **With LED Exterior Mirror Feature**:
+   - Additional position outputs:
+     - Vertical: em_pos_vert_pend, em_pos_vert_bottom, em_pos_vert_top
+     - Horizontal: em_pos_hor_pend, em_pos_hor_right, em_pos_hor_left
+
+3. **Combined (LED Exterior Mirror + Heatable)**:
+   - Combines all signals from both variants
+
+## 3. Alarm System Features
+
+### 3.1 Alarm System (AS)
+- **Standard Component**: Controls alarm system activation and monitoring
+- **Base Input Signals**:
+  - key_pos_lock: Enables alarm monitoring
+  - key_pos_unlock: Disables alarm monitoring
+  - as_alarm_detected: Triggers alarm
+  - time_alarm_elapsed: Represents alarm timeout
+  - as_activated/as_deactivated: Controls system activation state
+- **Base Output Signals**:
+  - as_active_on/off: Controls alarm monitoring state
+  - as_alarm_off/on: Controls alarm signal
+  - as_alarm_was_detected: Represents silent alarm
+
+**Variants**:
+1. **With Control Alarm System**:
+   - Additional inputs: rck_lock, rck_unlock for remote key control
+
+2. **With Interior Monitoring**:
+   - Additional input: im_alarm_detected
+   - Additional outputs: as_im_alarm_on, as_im_alarm_off
+
+3. **Combined (Control Alarm System + Interior Monitoring)**:
+   - Combines all signals from both variants
+
+## 4. Remote Control Features
+
+### 4.1 Remote Control Key Controller (RCK_Ctrl)
+- **Standard Component**: Enables remote control of central locking
+- **Base Input Signals**:
+  - rck_but_lock: Remote signal for locking
+  - rck_but_unlock: Remote signal for unlocking
+- **Base Output Signals**:
+  - rck_lock: Controls car locking
+  - rck_unlock: Controls car unlocking
+
+**Variants**:
+1. **With Control Automatic Power Window**:
+   - Additional inputs: pw_rm_up, pw_rm_dn
+   - Additional outputs: pw_but_up, pw_but_dn
+
+2. **With Safety Function**:
+   - Additional inputs: door_open, time_rck_sf_elapsed
+   
+3. **Combined (Control Automatic Power Window + Safety Function)**:
+   - Combines all signals from both variants
+
+## 5. Central Locking System Features
+
+### 5.1 Central Locking System (CLS)
+- **Standard Component**: Controls car locking/unlocking
+- **Base Input Signals**:
+  - key_pos_lock: Controls locking
+  - key_pos_unlock: Controls unlocking
+- **Base Output Signals**:
+  - cls_lock: Locks car and disables window
+  - cls_unlock: Unlocks car and enables window
+
+**Variants**:
+1. **With Remote Control Key**:
+   - Additional inputs: rck_lock, rck_unlock
+
+2. **With Automatic Locking**:
+   - Additional inputs: car_drives, door_open
+   - Additional outputs: car_lock, car_unlock
+
+3. **Combined (Remote Control Key + Automatic Locking)**:
+   - Combines all signals from both variants
+
+## 6. LED Features
+
+### 6.1 LED Power Window
+1. **LED Manual Power Window**:
+   - Controls LEDs for manual window movement
+   - Input: pw_mv_dn, pw_mv_up, release_pw_but
+   - Output: led_pw_up_on/off, led_pw_dn_on/off
+
+2. **LED Automatic Power Window**:
+   - Standard variant controls automated window movement LEDs
+   - With Central Locking System variant adds cls_lock/unlock inputs and led_pw_cls_up_on/off outputs
+
+### 6.2 LED Exterior Mirror
+- Four separate components for different positions:
+  1. Top (LED_EMT)
+  2. Left (LED_EML)
+  3. Bottom (LED_EMB)
+  4. Right (LED_EMR)
+- Each controls position-specific LED indicators
+
+### 6.3 LED Alarm System
+1. **LED Alarm System Active (LED_ASAC)**:
+   - Shows alarm system enabled state
+   
+2. **LED Alarm System Alarm (LED_ASAL)**:
+   - Shows active alarm state
+   
+3. **LED Alarm System Alarm Detected (LED_ASAD)**:
+   - Shows silent alarm state
+   
+4. **LED Alarm System Interior Monitoring (LED_ASIM)**:
+   - Shows interior alarm state
+
+### 6.4 Other LED Components
+- LED Heatable (LED_EMH)
+- LED Finger Protection (LED_FP)
+- LED Central Locking System (LED_CLS)
+
+## 7. Human Machine Interface (HMI)
+
+### 7.1 Standard Component
+- Controls basic user interactions for window and mirror movement
+
+**Variants**:
+1. **With Alarm System**:
+   - Adds alarm system control capabilities
+
+2. **With Alarm System + LED Alarm System**:
+   - Adds alarm confirmation functionality
+
+3. **With Manual Power Window + LED Power Window**:
+   - Adds button release control for LEDs
+
+4. **Combined Variants**:
+   - Various combinations of above features with corresponding signal sets

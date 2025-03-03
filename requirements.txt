@@ -1,0 +1,9 @@
+streamlit
+llama-index
+groq
+python-sat
+faiss-cpu
+sentence-transformers
+python-dotenv
+markdown
+PyPDF2
