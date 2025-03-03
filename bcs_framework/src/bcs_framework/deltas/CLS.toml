@@ -1,0 +1,56 @@
+[[deltas]]
+type = "delete"
+id = 1
+condition = { feature = "CLS", state = "inactive" }
+content = """
+"""
+
+[[deltas]]
+type = "delete"
+id = 2
+condition = { feature = "CLS", state = "inactive" }
+content = """
+"""
+
+[[deltas]]
+type = "delete"
+id = 3
+condition = { feature = "CLS", state = "inactive" }
+content = """
+"""
+
+[[deltas]]
+type = "delete"
+id = 4
+condition = { feature = "CLS", state = "inactive" }
+content = """
+"""
+
+[[deltas]]
+type = "delete"
+id = 5
+condition = { feature = "CLS", state = "inactive" }
+content = """
+"""
+
+[[deltas]]
+type = "add"
+id = 6
+condition = [
+    { feature = "CLS", state = "active" },
+    { feature = "Manual_PW", state = "active" }
+]
+content = """
+&& pw_enabled_state_
+"""
+
+[[deltas]]
+type = "add"
+id = 7
+condition = [
+    { feature = "CLS", state = "active" },
+    { feature = "Manual_PW", state = "active" }
+]
+content = """
+&& pw_enabled_state_
+"""

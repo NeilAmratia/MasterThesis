@@ -1,0 +1,26 @@
+<?xml version="1.0" ?>
+<configuration>
+  <feature manual="selected" name="AS"/>
+  <feature manual="selected" name="Automatic_Locking"/>
+  <feature manual="selected" name="Automatic_PW"/>
+  <feature manual="selected" name="CLS"/>
+  <feature manual="selected" name="Control_AS"/>
+  <feature manual="selected" name="Control_Automatic_PW"/>
+  <feature manual="selected" name="DoorSystem"/>
+  <feature manual="selected" name="EM"/>
+  <feature manual="selected" name="HMI"/>
+  <feature manual="selected" name="HMIStatus"/>
+  <feature manual="selected" name="Heatable"/>
+  <feature manual="selected" name="Interior_Monitoring"/>
+  <feature manual="selected" name="LED_AS"/>
+  <feature manual="selected" name="LED_CLS"/>
+  <feature manual="selected" name="LED_EM"/>
+  <feature manual="selected" name="LED_FP"/>
+  <feature manual="selected" name="LED_Heatable"/>
+  <feature manual="selected" name="LED_PW"/>
+  <feature manual="selected" name="PW"/>
+  <feature manual="selected" name="RCK"/>
+  <feature manual="selected" name="Safety_Function"/>
+  <feature manual="selected" name="Security"/>
+  <feature manual="selected" name="StatusLED"/>
+</configuration>

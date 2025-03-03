@@ -1,0 +1,1 @@
+/usr/bin/g++ -g CMakeFiles/feature_model_generator.dir/framework_core/feature_model_generator_main.cpp.o CMakeFiles/feature_model_generator.dir/framework_core/feature_model_generator.cpp.o -o feature_model_generator  -ltinyxml2 

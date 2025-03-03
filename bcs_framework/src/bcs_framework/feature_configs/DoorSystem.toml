@@ -1,0 +1,22 @@
+[feature_delta_files]
+CLS = "deltas/CLS.toml"
+Automatic_PW = "deltas/Automatic_PW.toml"
+Heatable = "deltas/Heatable.toml"
+LED_EM = "deltas/LED_EM.toml"
+
+[[feature_dependencies]]
+feature = "CLS"
+requires = []
+
+[[feature_dependencies]]
+feature = "Automatic_PW"
+requires = ["PW"]
+
+[[feature_dependencies]]
+feature = "Heatable"
+requires = ["EM"]
+
+[[feature_dependencies]]
+feature = "LED_EM"
+requires = []
+

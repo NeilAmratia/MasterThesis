@@ -1,0 +1,43 @@
+#Instructions to Run the bcs_simulator Docker File in an Interactive Window
+
+Step 1: Install X Server for GUI Support
+The bcs_simulator application uses a graphical user interface (GUI) built with Qt. To enable GUI support when running the Docker container, an X Server application like XLaunch is required to forward the graphical display from the container to the host machine.
+
+What is XLaunch?
+XLaunch is an X Server for Windows that allows Linux GUI applications (running in Docker or WSL) to display on your Windows system.
+
+Where to Download XLaunch?
+Download XLaunch from the official Xming (https://sourceforge.net/projects/xming/) website. Follow the installation instructions provided on the site.
+
+How to Set Up XLaunch?
+Install XLaunch on your system.
+Run XLaunch and configure it:
+Select "Multiple windows" or "One large window" as the display mode.
+Ensure "No Access Control" is checked to allow connections from the container.
+
+Setting DISPLAY Variable
+Before running the Docker container, set the DISPLAY variable on your system. On Windows, it is typically:
+- set DISPLAY=host.docker.internal:0.0
+
+Step 2: Start the Docker Container (please see the instructions present in the parent folder):
+- docker run -it --rm --net bcs_network -e DISPLAY=host.docker.internal:0.0 amratianeil/bcs_simulator:latest
+
+Step 3: Build and Source the bcs_simulator Package
+- cd /ros2_ws
+- colcon build --packages-select bcs_simulator
+- source install/setup.bash
+
+Step 4: Run the bcs_simulator Application
+- ros2 run bcs_simulator bcs_simulator
+
+Step 5: Run the test cases for input_configuration file
+- ros2 run bcs_simulator bcs_test_suite path/to/input_configuration.xml
+
+( Example: ros2 run bcs_simulator bcs_test_suite input_config/LLM/input_configuration_4.xml)
+
+Important Notes:-
+Ensure XLaunch is Running: Before executing the bcs_simulator application, verify that XLaunch is running and configured with "No Access Control."
+Network Configuration: If the container cannot communicate with the host's display, ensure that the DISPLAY variable is correctly set and accessible.
+Test the Display: You can test if the display is working by running the following command in the container:
+- xeyes
+This should open a graphical window on your host machine.

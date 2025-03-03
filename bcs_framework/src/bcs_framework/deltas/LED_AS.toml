@@ -1,0 +1,302 @@
+[[deltas]]
+type = "add"
+id = 1
+condition = { feature = "LED_AS", state = "active" }
+content = """
+void LED_AS_ACTIVE();
+void LED_AS_ALARM();
+void LED_AS_DETECT();
+"""
+
+[[deltas]]
+type = "add"
+id = 2
+condition = { feature = "LED_AS", state = "active" }
+content = """
+// LED Alarm System
+// Alarm Active
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr as_active_on;
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr as_active_off;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr led_as_active_on;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr led_as_active_off;
+bool as_active_on_value = false;
+bool as_active_off_value = false;
+enum class AlarmActiveState {
+    AS_ACTIVE_LED_OFF,
+    AS_ACTIVE_LED_ON
+};
+AlarmActiveState current_led_as_active_state = AlarmActiveState::AS_ACTIVE_LED_OFF;
+// System Alarm
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr as_alarm_on;
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr as_alarm_off;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr led_as_alarm_on;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr led_as_alarm_off;
+bool as_alarm_on_value = false;
+bool as_alarm_off_value = false;
+enum class SystemAlarmState {
+    AS_ALARM_LED_OFF,
+    AS_ALARM_LED_ON
+};
+SystemAlarmState current_led_as_alarm_state = SystemAlarmState::AS_ALARM_LED_OFF;
+// Alarm Detected
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr as_alarm_was_detected;
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr as_alarm_was_confirmed_sub;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr led_as_alarm_detected_on;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr led_as_alarm_detected_off;
+bool as_alarm_was_detected_value = false;
+bool as_alarm_was_confirmed_sub_value = false;
+enum class AlarmDetectedState {
+    AS_DETECTED_LED_OFF,
+    AS_DETECTED_LED_ON
+};
+AlarmDetectedState current_led_as_detected_state = AlarmDetectedState::AS_DETECTED_LED_OFF;
+"""
+
+[[deltas]]
+type = "add"
+id = 3
+condition = { feature = "LED_AS", state = "active" }
+content = """
+// LED Alarm System
+// Alarm Active
+as_active_on = node->create_subscription<std_msgs::msg::Bool>(
+    "as_active_on", 10,
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        as_active_on_value = msg->data;
+        LED_AS_ACTIVE();
+    }
+);
+as_active_off = node->create_subscription<std_msgs::msg::Bool>(
+    "as_active_off", 10,
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        as_active_off_value = msg->data;
+        LED_AS_ACTIVE();
+    }
+);
+led_as_active_on = node->create_publisher<std_msgs::msg::Bool>("led_as_active_on", 10);
+led_as_active_off = node->create_publisher<std_msgs::msg::Bool>("led_as_active_off", 10);
+// System Alarm
+as_alarm_on = node->create_subscription<std_msgs::msg::Bool>(
+    "as_alarm_on", 10,
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        as_alarm_on_value = msg->data;
+        LED_AS_ALARM();
+    }
+);
+as_alarm_off = node->create_subscription<std_msgs::msg::Bool>(
+    "as_alarm_off", 10,
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        as_alarm_off_value = msg->data;
+        LED_AS_ALARM();
+    }
+);
+led_as_alarm_on = node->create_publisher<std_msgs::msg::Bool>("led_as_alarm_on", 10);
+led_as_alarm_off = node->create_publisher<std_msgs::msg::Bool>("led_as_alarm_off", 10);
+// Alarm Detected
+as_alarm_was_detected = node->create_subscription<std_msgs::msg::Bool>(
+    "as_alarm_was_detected", 10,
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        as_alarm_was_detected_value = msg->data;
+        LED_AS_DETECT();
+    }
+);
+as_alarm_was_confirmed_sub = node->create_subscription<std_msgs::msg::Bool>(
+    "as_alarm_was_confirmed", 10,
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        as_alarm_was_confirmed_sub_value = msg->data;
+        LED_AS_DETECT();
+    }
+);
+led_as_alarm_detected_on = node->create_publisher<std_msgs::msg::Bool>("led_as_alarm_detected_on", 10);
+led_as_alarm_detected_off = node->create_publisher<std_msgs::msg::Bool>("led_as_alarm_detected_off", 10);
+"""
+
+[[deltas]]
+type = "add"
+id = 4
+condition = { feature = "LED_AS", state = "active" }
+content = """
+void HMI::StatusLED::LED_AS_ACTIVE() {
+    std_msgs::msg::Bool msg;
+    msg.data = true;
+
+    switch (current_led_as_active_state) {
+        case AlarmActiveState::AS_ACTIVE_LED_OFF:
+            if (as_active_on_value) {
+                led_as_active_on->publish(msg);
+                current_led_as_active_state = AlarmActiveState::AS_ACTIVE_LED_ON;
+            } 
+            break;
+
+        case AlarmActiveState::AS_ACTIVE_LED_ON:
+            if (as_active_off_value) {
+                led_as_active_off->publish(msg);
+                current_led_as_active_state = AlarmActiveState::AS_ACTIVE_LED_OFF;
+            } 
+            break;
+    }
+}
+
+void HMI::StatusLED::LED_AS_ALARM() {
+    std_msgs::msg::Bool msg;
+    msg.data = true;
+
+    switch (current_led_as_alarm_state) {
+        case SystemAlarmState::AS_ALARM_LED_OFF:
+            if (as_alarm_on_value) {
+                led_as_alarm_on->publish(msg);
+                current_led_as_alarm_state = SystemAlarmState::AS_ALARM_LED_ON;
+            } 
+            break;
+
+        case SystemAlarmState::AS_ALARM_LED_ON:
+            if (as_alarm_off_value) {
+                led_as_alarm_off->publish(msg);
+                current_led_as_alarm_state = SystemAlarmState::AS_ALARM_LED_OFF;
+            } 
+            break;
+    }
+}
+
+void HMI::StatusLED::LED_AS_DETECT() {
+    std_msgs::msg::Bool msg;
+    msg.data = true;
+
+    switch (current_led_as_detected_state) {
+        case AlarmDetectedState::AS_DETECTED_LED_OFF:
+            if (as_alarm_was_detected_value) {
+                led_as_alarm_detected_on->publish(msg);
+                current_led_as_detected_state = AlarmDetectedState::AS_DETECTED_LED_ON;
+            } 
+            break;
+
+        case AlarmDetectedState::AS_DETECTED_LED_ON:
+            if (as_alarm_was_confirmed_sub_value) {
+                led_as_alarm_detected_off->publish(msg);
+                current_led_as_detected_state = AlarmDetectedState::AS_DETECTED_LED_OFF;
+            } 
+            break;
+    }
+}
+
+"""
+
+[[deltas]]
+type = "add"
+id = 5
+condition = { feature = "LED_AS", state = "active" }
+content = """
+// LED Alarm
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr confirm_alarm;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr as_alarm_was_confirmed;
+"""
+
+[[deltas]]
+type = "add"
+id = 6
+condition = { feature = "LED_AS", state = "active" }
+content = """
+// LED Alarm
+as_alarm_was_confirmed = node->create_publisher<std_msgs::msg::Bool>("as_alarm_was_confirmed", 10);
+confirm_alarm = node->create_subscription<std_msgs::msg::Bool>(
+    "confirm_alarm", 10,
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        std_msgs::msg::Bool new_msg;
+        new_msg.data = msg->data;
+        as_alarm_was_confirmed->publish(new_msg);
+    }
+);
+"""
+
+[[deltas]]
+type = "add"
+id = 7
+condition = [
+    { feature = "LED_AS", state = "active" },
+    { feature = "Interior_Monitoring", state = "active" }
+]
+content = """
+void LED_AS_IM();
+"""
+
+[[deltas]]
+type = "add"
+id = 8
+condition = [
+    { feature = "LED_AS", state = "active" },
+    { feature = "Interior_Monitoring", state = "active" }
+]
+content = """
+// Interior Monitoring
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr as_im_alarm_on;
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr as_im_alarm_off;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr led_as_im_alarm_on;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr led_as_im_alarm_off;
+bool as_im_alarm_on_value = false;
+bool as_im_alarm_off_value = false;
+enum class AlarmIMState {
+    AS_IM_LED_OFF,
+    AS_IM_LED_ON
+};
+AlarmIMState current_led_as_im_state = AlarmIMState::AS_IM_LED_OFF;
+"""
+
+[[deltas]]
+type = "add"
+id = 9
+condition = [
+    { feature = "LED_AS", state = "active" },
+    { feature = "Interior_Monitoring", state = "active" }
+]
+content = """
+// Interior Monitoring
+as_im_alarm_on = node->create_subscription<std_msgs::msg::Bool>(
+    "as_im_alarm_on", 10,
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        as_im_alarm_on_value = msg->data;
+        LED_AS_IM();
+    }
+);
+as_im_alarm_off = node->create_subscription<std_msgs::msg::Bool>(
+    "as_im_alarm_off", 10,
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        as_im_alarm_off_value = msg->data;
+        LED_AS_IM();
+    }
+);
+led_as_im_alarm_on = node->create_publisher<std_msgs::msg::Bool>("led_as_im_alarm_on", 10);
+led_as_im_alarm_off = node->create_publisher<std_msgs::msg::Bool>("led_as_im_alarm_off", 10);
+"""
+
+[[deltas]]
+type = "add"
+id = 10
+condition = [
+    { feature = "LED_AS", state = "active" },
+    { feature = "Interior_Monitoring", state = "active" }
+]
+content = """
+void HMI::StatusLED::LED_AS_IM() {
+    std_msgs::msg::Bool msg;
+    msg.data = true;
+
+    switch (current_led_as_im_state) {
+        case AlarmIMState::AS_IM_LED_OFF:
+            if (as_im_alarm_on_value) {
+                std::cout << "ERROR 12" << std::endl;
+                led_as_im_alarm_on->publish(msg);
+                current_led_as_im_state = AlarmIMState::AS_IM_LED_ON;
+            } 
+            break;
+
+        case AlarmIMState::AS_IM_LED_ON:
+            if (as_im_alarm_off_value) {
+                led_as_im_alarm_off->publish(msg);
+                current_led_as_im_state = AlarmIMState::AS_IM_LED_OFF;
+            } 
+            break;
+    }
+}
+"""
+
+

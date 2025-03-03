@@ -1,0 +1,86 @@
+[[deltas]]
+type = "add"
+id = 1
+condition = { feature = "Safety_Function", state = "active" }
+content = """
+// Safety Functions Components
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr door_open_2;
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr time_rck_sf_elapsed;
+bool door_open_value_2 = false;
+bool time_rck_sf_elapsed_value = false;
+
+enum class RemoteSafetyFunctionsState {
+    SF_OFF,
+    SF_ON
+};
+RemoteSafetyFunctionsState current_rck_sf_state = RemoteSafetyFunctionsState::SF_OFF;
+"""
+
+[[deltas]]
+type = "add"
+id = 2
+condition = { feature = "Safety_Function", state = "active" }
+content = """
+// Safety Functions Components
+door_open_2 = node->create_subscription<std_msgs::msg::Bool>(
+    "door_open", 10,
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        door_open_value_2 = msg->data;
+        rck_sf();
+    }
+);
+time_rck_sf_elapsed = node->create_subscription<std_msgs::msg::Bool>(
+    "time_rck_sf_elapsed", 10,
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        time_rck_sf_elapsed_value = msg->data;
+        rck_sf();
+    }
+);
+"""
+[[deltas]]
+type = "add"
+id = 3
+condition = { feature = "Safety_Function", state = "active" }
+content = """
+void Security::RCK::rck_sf() {
+    std_msgs::msg::Bool msg;
+    msg.data = true;
+
+    switch (current_rck_sf_state) {
+        case RemoteSafetyFunctionsState::SF_OFF:
+            if (rck_but_unlock_value) {
+                rck_unlock->publish(msg);
+                current_rck_sf_state = RemoteSafetyFunctionsState::SF_ON;
+            }
+            break;
+
+        case RemoteSafetyFunctionsState::SF_ON:
+            if (door_open_value_2) {
+		        std::cout << "ERROR 8" << std::endl;
+                rck_lock->publish(msg);
+                current_rck_sf_state = RemoteSafetyFunctionsState::SF_OFF;
+            } else if (time_rck_sf_elapsed_value) {
+                rck_lock->publish(msg);
+                current_rck_sf_state = RemoteSafetyFunctionsState::SF_OFF;
+            }
+            break;
+    }
+}
+"""
+
+[[deltas]]
+type = "add"
+id = 4
+condition = { feature = "Safety_Function", state = "active" }
+content = """
+void rck_sf();
+"""
+
+[[deltas]]
+type = "add"
+id = 5
+condition = { feature = "Safety_Function", state = "active" }
+content = """
+rck_sf();
+rck_but_unlock_value = false;
+"""

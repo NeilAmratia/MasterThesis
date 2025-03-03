@@ -1,0 +1,78 @@
+[[deltas]]
+type = "add"
+id = 1
+condition = { feature = "LED_FP", state = "active" }
+content = """
+void LED_FP();
+"""
+
+[[deltas]]
+type = "add"
+id = 2
+condition = { feature = "LED_FP", state = "active" }
+content = """
+// LED Finger Protection
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr fp_on;
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr fp_off;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr led_fp_on;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr led_fp_off;
+bool fp_on_value = false;
+bool fp_off_value = false;
+enum class FingerProtectionState {
+    FP_LED_OFF,
+    FP_LED_ON
+};
+FingerProtectionState current_led_fp_state = FingerProtectionState::FP_LED_OFF;
+"""
+[[deltas]]
+type = "add"
+id = 3
+condition = { feature = "LED_FP", state = "active" }
+content = """
+// LED Finger Protection
+fp_on = node->create_subscription<std_msgs::msg::Bool>(
+    "fp_on", 10,
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        fp_on_value = msg->data;
+        LED_FP();
+        fp_on_value = false;
+    }
+);
+fp_off = node->create_subscription<std_msgs::msg::Bool>(
+    "fp_off", 10,
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        fp_off_value = msg->data;
+        LED_FP();
+        fp_off_value = false;
+    }
+);
+led_fp_on = node->create_publisher<std_msgs::msg::Bool>("led_fp_on", 10);
+led_fp_off = node->create_publisher<std_msgs::msg::Bool>("led_fp_off", 10);
+"""
+
+[[deltas]]
+type = "add"
+id = 4
+condition = { feature = "LED_FP", state = "active" }
+content = """
+void HMI::StatusLED::LED_FP() {
+    std_msgs::msg::Bool msg;
+    msg.data = true;
+
+    switch (current_led_fp_state) {
+        case FingerProtectionState::FP_LED_OFF:
+            if (fp_on_value) {
+                led_fp_on->publish(msg);
+                current_led_fp_state = FingerProtectionState::FP_LED_ON;
+            } 
+            break;
+
+        case FingerProtectionState::FP_LED_ON:
+            if (fp_off_value) {
+                led_fp_off->publish(msg);
+                current_led_fp_state = FingerProtectionState::FP_LED_OFF;
+            } 
+            break;
+    }
+}
+"""

@@ -1,0 +1,78 @@
+[[deltas]]
+type = "add"
+id = 1
+condition = { feature = "LED_CLS", state = "active" }
+content = """
+void LED_CLS();
+"""
+
+[[deltas]]
+type = "add"
+id = 2
+condition = { feature = "LED_CLS", state = "active" }
+content = """
+// LED Central Locking System
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr cls_lock;
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr cls_unlock;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr led_cls_on;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr led_cls_off;
+bool cls_lock_value = false;
+bool cls_unlock_value = false;
+enum class CentralLockingSystemState {
+    CLS_LED_OFF,
+    CLS_LED_ON
+};
+CentralLockingSystemState current_led_cls_state = CentralLockingSystemState::CLS_LED_OFF;
+"""
+[[deltas]]
+type = "add"
+id = 3
+condition = { feature = "LED_CLS", state = "active" }
+content = """
+// LED Central Locking System
+cls_lock = node->create_subscription<std_msgs::msg::Bool>(
+    "cls_lock", 10,
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        cls_lock_value = msg->data;
+        LED_CLS();
+        cls_lock_value = false;
+    }
+);
+cls_unlock = node->create_subscription<std_msgs::msg::Bool>(
+    "cls_unlock", 10,
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        cls_unlock_value = msg->data;
+        LED_CLS();
+        cls_unlock_value = false;
+    }
+);
+led_cls_on = node->create_publisher<std_msgs::msg::Bool>("led_cls_on", 10);
+led_cls_off = node->create_publisher<std_msgs::msg::Bool>("led_cls_off", 10);
+"""
+
+[[deltas]]
+type = "add"
+id = 4
+condition = { feature = "LED_CLS", state = "active" }
+content = """
+void HMI::StatusLED::LED_CLS() {
+    std_msgs::msg::Bool msg;
+    msg.data = true;
+
+    switch (current_led_cls_state) {
+        case CentralLockingSystemState::CLS_LED_OFF:
+            if (cls_lock_value) {
+                led_cls_on->publish(msg);
+                current_led_cls_state = CentralLockingSystemState::CLS_LED_ON;
+            } 
+            break;
+
+        case CentralLockingSystemState::CLS_LED_ON:
+            if (cls_unlock) {
+                led_cls_off->publish(msg);
+                current_led_cls_state = CentralLockingSystemState::CLS_LED_OFF;
+            } 
+            break;
+    }
+}
+"""

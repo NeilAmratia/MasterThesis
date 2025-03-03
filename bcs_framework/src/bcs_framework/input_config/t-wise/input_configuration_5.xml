@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+<configuration>
+  <feature manual="unselected" name="Interior_Monitoring"/>
+  <feature manual="selected" name="LED_FP"/>
+  <feature manual="selected" name="DoorSystem"/>
+  <feature manual="ununselected" name="Manual_PW"/>
+  <feature manual="unselected" name="LED_PW"/>
+  <feature manual="selected" name="PW"/>
+  <feature manual="selected" name="FP"/>
+  <feature manual="selected" name="CLS"/>
+  <feature manual="selected" name="Security"/>
+  <feature manual="selected" name="StatusLED"/>
+  <feature manual="unselected" name="LED_AS"/>
+  <feature manual="unselected" name="LED_EM"/>
+  <feature manual="selected" name="Automatic_PW"/>
+  <feature manual="selected" name="Adjust_EM"/>
+  <feature manual="unselected" name="Control_AS"/>
+  <feature manual="selected" name="HMI"/>
+  <feature manual="selected" name="EM"/>
+  <feature manual="selected" name="Electric"/>
+  <feature manual="unselected" name="Automatic_Locking"/>
+  <feature manual="selected" name="Heatable"/>
+  <feature manual="selected" name="PW_Control"/>
+  <feature manual="unselected" name="AS"/>
+  <feature manual="selected" name="LED_CLS"/>
+  <feature manual="selected" name="BodyComfortSystem"/>
+  <feature manual="selected" name="LED_Heatable"/>
+  <feature manual="selected" name="Control_Automatic_PW"/>
+  <feature manual="selected" name="RCK"/>
+  <feature manual="selected" name="Safety_Function"/>
+</configuration>

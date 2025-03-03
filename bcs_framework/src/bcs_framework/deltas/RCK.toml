@@ -1,0 +1,74 @@
+[[deltas]]
+type = "add"
+id = 1
+condition = { feature = "RCK", state = "active" }
+content = """
+// Remote Control Key Components
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr rck_lock_sub_2;
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr rck_unlock_sub_2;
+bool rck_lock_sub_2_value = false;
+bool rck_unlock_sub_2_value = false;
+"""
+
+[[deltas]]
+type = "add"
+id = 2
+condition = { feature = "RCK", state = "active" }
+content = """
+// Remote Control Key Components
+rck_lock_sub_2 = node->create_subscription<std_msgs::msg::Bool>(
+    "rck_lock", 10,
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        rck_lock_sub_2_value = msg->data;
+        cls();
+        rck_lock_sub_2_value = false;
+    }
+);
+rck_unlock_sub_2 = node->create_subscription<std_msgs::msg::Bool>(
+    "rck_unlock", 10,
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        rck_unlock_sub_2_value = msg->data;
+        cls();
+        rck_unlock_sub_2_value = false;
+    }
+);
+"""
+
+[[deltas]]
+type = "add"
+id = 3
+condition = { feature = "RCK", state = "active" }
+content = """
+else if (rck_lock_sub_2_value) {
+    cls_lock->publish(msg);
+    current_cls_state = CentrolLockingSystemState::CLS_LOCK;
+}
+"""
+
+[[deltas]]
+type = "add"
+id = 4
+condition = { feature = "RCK", state = "active" }
+content = """
+else if (rck_unlock_sub_2_value) {
+    std::cout << "ERROR 9" << std::endl;
+    cls_unlock->publish(msg);
+    current_cls_state = CentrolLockingSystemState::CLS_UNLOCK;
+} 
+"""
+
+[[deltas]]
+type = "delete"
+id = 7
+condition = { feature = "RCK", state = "inactive" }
+
+[[deltas]]
+type = "delete"
+id = 8
+condition = { feature = "RCK", state = "inactive" }
+
+[[deltas]]
+type = "delete"
+id = 9
+condition = { feature = "RCK", state = "inactive" }
+

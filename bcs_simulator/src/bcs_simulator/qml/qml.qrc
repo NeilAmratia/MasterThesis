@@ -1,0 +1,33 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>inputs/HMI.qml</file>
+        <file>inputs/RemoteControl.qml</file>
+        <file>inputs/AlarmControl.qml</file>
+        <file>outputs/LedIndicators.qml</file>
+        <file>outputs/MirrorControl.qml</file>
+        <file>outputs/WindowControl.qml</file>
+        <file>assets/window_up_off.png</file>
+        <file>assets/window_up_on.png</file>
+        <file>assets/window_down_off.png</file>
+        <file>assets/window_down_on.png</file>
+        <file>assets/mirror_down_off.png</file>
+        <file>assets/mirror_down_on.png</file>
+        <file>assets/mirror_left_off.png</file>
+        <file>assets/mirror_left_on.png</file>
+        <file>assets/mirror_right_off.png</file>
+        <file>assets/mirror_right_on.png</file>
+        <file>assets/mirror_up_off.png</file>
+        <file>assets/mirror_up_on.png</file>
+        <file>assets/lock_off.png</file>
+        <file>assets/lock_on.png</file>
+        <file>assets/unlock_off.png</file>
+        <file>assets/unlock_on.png</file>
+        <file>assets/mirror_heating_on.png</file>
+        <file>assets/mirror_heating_off.png</file>
+        <file>assets/unlock.png</file>
+        <file>assets/lock.png</file>
+        <file>assets/alarm_off.png</file>
+        <file>assets/alarm_on.png</file>
+    </qresource>
+</RCC>

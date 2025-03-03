@@ -1,0 +1,36 @@
+[feature_delta_files]
+AS = "deltas/AS.toml"
+LED_AS = "deltas/LED_AS.toml"
+LED_FP = "deltas/LED_FP.toml"
+LED_CLS = "deltas/LED_CLS.toml"
+LED_PW = "deltas/LED_PW.toml"
+LED_EM = "deltas/LED_EM.toml"
+LED_Heatable = "deltas/LED_Heatable.toml"
+
+[[feature_dependencies]]
+feature = "AS"
+requires = []
+
+[[feature_dependencies]]
+feature = "LED_AS"
+requires = ["StatusLED","AS"]
+
+[[feature_dependencies]]
+feature = "LED_FP"
+requires = ["StatusLED"]
+
+[[feature_dependencies]]
+feature = "LED_CLS"
+requires = ["StatusLED","AS"]
+
+[[feature_dependencies]]
+feature = "LED_PW"
+requires = ["StatusLED"]
+
+[[feature_dependencies]]
+feature = "LED_EM"
+requires = ["StatusLED"]
+
+[[feature_dependencies]]
+feature = "LED_Heatable"
+requires = ["StatusLED","Heatable"]

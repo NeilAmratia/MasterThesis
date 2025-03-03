@@ -1,0 +1,46 @@
+{
+    "configurations": [
+        {
+            "browse": {
+                "path": [
+                    "${workspaceFolder}"
+                ],
+                "databaseFilename": "${default}",
+                "limitSymbolsToIncludedHeaders": false
+            },
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/opt/ros/iron/include/**",
+                "/home/neil_amratia/ros2_qt_workspace/src/qt_ros2_bridge/include/**",
+                "/usr/include/**",
+                "/opt/ros/iron/include/rclcpp",
+                "/opt/ros/iron/include/std_msgs",
+                "/opt/ros/iron/include/rcutils",
+                "/home/neil_amratia/Qt/5.15.18/gcc_64/include/**",
+                "/home/neil_amratia/Qt/5.15.18/gcc_64/include/Qt6/**",
+                "/home/neil_amratia/Qt/5.15.18/gcc_64/include/Qt6Core/**",
+                "/home/neil_amratia/Qt/5.15.18/gcc_64/include/Qt6Gui/**",
+                "/home/neil_amratia/Qt/5.15.18/gcc_64/include/Qt6Qml/**",
+                "/home/neil_amratia/Qt/5.15.18/gcc_64/include/Qt6Quick/**",
+                "/home/neil_amratia/Qt/5.15.18/gcc_64/include/Qt6QuickControls2/**"
+            ],
+            "name": "ROS2",
+            "defines": [],
+            "intelliSenseMode": "gcc-x64",
+            "compilerPath": "C:\\msys64\\ucrt64\\bin\\gcc.exe",
+            "cStandard": "gnu17",
+            "cppStandard": "c++17"
+        },
+        {
+            "name": "msg",
+            "includePath": [
+                "${default}"
+            ],
+            "defines": [],
+            "cStandard": "c17",
+            "cppStandard": "c++14",
+            "intelliSenseMode": "linux-clang-x64"
+        }
+    ],
+    "version": 4
+}

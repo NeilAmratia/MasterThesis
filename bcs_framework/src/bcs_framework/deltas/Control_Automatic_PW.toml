@@ -1,0 +1,39 @@
+[[deltas]]
+type = "add"
+id = 1
+condition = { feature = "Control_Automatic_PW", state = "active" }
+content = """
+// Automatic Power Window Components
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr pw_rm_up;
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr pw_rm_dn;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr pw_but_up;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr pw_but_dn;
+"""
+
+[[deltas]]
+type = "add"
+id = 2
+condition = { feature = "Control_Automatic_PW", state = "active" }
+content = """
+// Automatic Power Window Components
+pw_rm_up = node->create_subscription<std_msgs::msg::Bool>(
+    "pw_rm_up", 10,
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        std::cout << "ERROR 7" << std::endl;
+        std_msgs::msg::Bool new_msg;
+        new_msg.data = msg->data;
+        pw_but_up->publish(new_msg);
+    }
+);
+pw_rm_dn = node->create_subscription<std_msgs::msg::Bool>(
+    "pw_rm_dn", 10,
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        std_msgs::msg::Bool new_msg;
+        new_msg.data = msg->data;
+        pw_but_dn->publish(new_msg);
+    }
+);
+pw_but_up = node->create_publisher<std_msgs::msg::Bool>("pw_but_up", 10);
+pw_but_dn = node->create_publisher<std_msgs::msg::Bool>("pw_but_dn", 10);
+"""
+

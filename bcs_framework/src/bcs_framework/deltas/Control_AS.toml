@@ -1,0 +1,101 @@
+[[deltas]]
+type = "add"
+id = 1
+condition = [
+    { feature = "Control_AS", state = "active" },
+    { feature = "AS", state = "active" }
+]
+content = """
+// Control Alarm System Components
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr rck_lock_sub_1;
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr rck_unlock_sub_1;
+bool rck_lock_sub_1_value = false;
+bool rck_unlock_sub_1_value = false;
+"""
+
+[[deltas]]
+type = "add"
+id = 2
+condition = [
+    { feature = "Control_AS", state = "active" },
+    { feature = "AS", state = "active" }
+]
+content = """
+// Control Alarm System Components
+    rck_lock_sub_1 = node->create_subscription<std_msgs::msg::Bool>(
+        "rck_lock", 10,
+        [this](const std_msgs::msg::Bool::SharedPtr msg) {
+            rck_lock_sub_1_value = msg->data;
+            alarmSystem();
+            rck_lock_sub_1_value = false;
+        }
+    );
+    rck_unlock_sub_1 = node->create_subscription<std_msgs::msg::Bool>(
+        "rck_unlock", 10,
+        [this](const std_msgs::msg::Bool::SharedPtr msg) {
+            rck_unlock_sub_1_value = msg->data;
+            alarmSystem();
+            rck_unlock_sub_1_value = false;
+        }
+    );
+"""
+[[deltas]]
+type = "add"
+id = 3
+condition = [
+    { feature = "Control_AS", state = "active" },
+    { feature = "AS", state = "active" }
+]
+content = """
+else if (as_activated_value && rck_lock_sub_1_value) {
+    as_active_on->publish(msg);
+    current_alarm_system_state = AlarmSystemState::AS_ON;
+}
+"""
+
+[[deltas]]
+type = "add"
+id = 4
+condition = [
+    { feature = "Control_AS", state = "active" },
+    { feature = "AS", state = "active" }
+]
+content = """
+else if (rck_unlock_sub_1_value) {
+    as_active_off->publish(msg);
+    current_alarm_system_state = AlarmSystemState::AS_OFF;
+}
+"""
+
+[[deltas]]
+type = "add"
+id = 5
+condition = [
+    { feature = "Control_AS", state = "active" },
+    { feature = "Interior_Monitoring", state = "active" },
+    { feature = "AS", state = "active" }
+]
+content = """
+else if (rck_unlock_sub_1_value) {
+    as_active_off->publish(msg);
+    as_alarm_off->publish(msg);
+    as_im_alarm_off->publish(msg);
+    current_alarm_system_state = AlarmSystemState::AS_OFF;
+}
+"""
+[[deltas]]
+type = "add"
+id = 6
+condition = [
+    { feature = "Control_AS", state = "active" },
+    { feature = "Interior_Monitoring", state = "inactive" },
+    { feature = "AS", state = "active" }
+]
+content = """
+else if (rck_unlock_sub_1_value) {
+    std::cout << "ERROR 6" << std::endl;
+    as_active_off->publish(msg);
+    as_alarm_off->publish(msg);
+    current_alarm_system_state = AlarmSystemState::AS_OFF;
+}
+"""

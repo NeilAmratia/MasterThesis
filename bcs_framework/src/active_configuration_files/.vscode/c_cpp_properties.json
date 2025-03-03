@@ -1,0 +1,25 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/opt/ros/iron/include/**",
+        "/home/neil_amratia/my_framework/src/active_configuration_files/include/**",
+        "/home/neil_amratia/my_framework/src/clang_framework/include/**",
+        "/home/neil_amratia/my_framework/src/clang_test/include/**",
+        "/home/neil_amratia/my_framework/src/delta_package/include/**",
+        "/home/neil_amratia/my_framework/src/delta_variant_package/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}

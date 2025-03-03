@@ -1,0 +1,425 @@
+[[deltas]]
+type = "add"
+id = 1
+condition = { feature = "LED_EM", state = "active" }
+content = """
+void LED_EM_TOP();
+void LED_EM_LEFT();
+void LED_EM_RIGHT();
+void LED_EM_BOTTOM();
+"""
+
+[[deltas]]
+type = "add"
+id = 2
+condition = { feature = "LED_EM", state = "active" }
+content = """
+// LED Exterior Mirror
+// Top
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr em_pos_vert_top;
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr em_pos_vert_pend;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr led_em_top_off;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr led_em_top_on;
+bool em_pos_vert_top_value = false;
+bool em_pos_vert_pend_value = false;
+enum class MirrorTopState {
+    EM_TOP_LED_OFF,
+    EM_TOP_LED_ON
+};
+MirrorTopState current_led_em_top_state = MirrorTopState::EM_TOP_LED_OFF;
+// Left
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr em_pos_hor_left;
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr em_pos_hor_pend;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr led_em_left_off;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr led_em_left_on;
+bool em_pos_hor_left_value = false;
+bool em_pos_hor_pend_value = false;
+enum class MirrorLeftState {
+    EM_LEFT_LED_OFF,
+    EM_LEFT_LED_ON
+};
+MirrorLeftState current_led_em_left_state = MirrorLeftState::EM_LEFT_LED_OFF;
+// Bottom
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr em_pos_vert_bottom;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr led_em_bottom_off;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr led_em_bottom_on;
+bool em_pos_vert_bottom_value = false;
+enum class MirrorBottomState {
+    EM_BOTTOM_LED_OFF,
+    EM_BOTTOM_LED_ON
+};
+MirrorBottomState current_led_em_bottom_state = MirrorBottomState::EM_BOTTOM_LED_OFF;
+// Right
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr em_pos_hor_right;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr led_em_right_off;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr led_em_right_on;
+bool em_pos_hor_right_value = false;
+enum class MirrorRightState {
+    EM_RIGHT_LED_OFF,
+    EM_RIGHT_LED_ON
+};
+MirrorRightState current_led_em_right_state = MirrorRightState::EM_RIGHT_LED_OFF;
+"""
+[[deltas]]
+type = "add"
+id = 3
+condition = { feature = "LED_EM", state = "active" }
+content = """
+// LED Exterior Mirror
+// Top
+em_pos_vert_top = node->create_subscription<std_msgs::msg::Bool>(
+    "em_pos_vert_top", 10,
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        em_pos_vert_top_value = msg->data;
+        em_pos_vert_pend_value = false;
+        LED_EM_TOP();
+    }
+);
+em_pos_vert_pend = node->create_subscription<std_msgs::msg::Bool>(
+    "em_pos_vert_pend", 10,
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        em_pos_vert_pend_value = msg->data;
+        em_pos_vert_top_value = false;
+        em_pos_vert_bottom_value = false;
+        LED_EM_TOP();
+        LED_EM_BOTTOM();
+    }
+);
+led_em_top_off = node->create_publisher<std_msgs::msg::Bool>("led_em_top_off", 10);
+led_em_top_on = node->create_publisher<std_msgs::msg::Bool>("led_em_top_on", 10);
+// Bottom
+em_pos_vert_bottom = node->create_subscription<std_msgs::msg::Bool>(
+    "em_pos_vert_bottom", 10,
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        em_pos_vert_bottom_value = msg->data;
+        em_pos_vert_pend_value = false;
+        LED_EM_BOTTOM();
+    }
+);
+led_em_bottom_off = node->create_publisher<std_msgs::msg::Bool>("led_em_bottom_off", 10);
+led_em_bottom_on = node->create_publisher<std_msgs::msg::Bool>("led_em_bottom_on", 10);
+// Left
+em_pos_hor_left = node->create_subscription<std_msgs::msg::Bool>(
+    "em_pos_hor_left", 10,
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        em_pos_hor_left_value = msg->data;
+        em_pos_hor_pend_value = false;
+        LED_EM_LEFT();
+    }
+);
+em_pos_hor_pend = node->create_subscription<std_msgs::msg::Bool>(
+    "em_pos_hor_pend", 10,
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        em_pos_hor_pend_value = msg->data;
+        em_pos_hor_left_value = false;
+        em_pos_hor_right_value = false;
+        LED_EM_LEFT();
+        LED_EM_RIGHT();
+    }
+);
+led_em_left_off = node->create_publisher<std_msgs::msg::Bool>("led_em_left_off", 10);
+led_em_left_on = node->create_publisher<std_msgs::msg::Bool>("led_em_left_on", 10);
+// Right
+em_pos_hor_right = node->create_subscription<std_msgs::msg::Bool>(
+    "em_pos_hor_right", 10,
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        em_pos_hor_right_value = msg->data;
+        em_pos_hor_pend_value = false;
+        LED_EM_RIGHT();
+    }
+);
+led_em_right_off = node->create_publisher<std_msgs::msg::Bool>("led_em_right_off", 10);
+led_em_right_on = node->create_publisher<std_msgs::msg::Bool>("led_em_right_on", 10);
+"""
+
+[[deltas]]
+type = "add"
+id = 4
+condition = { feature = "LED_EM", state = "active" }
+content = """
+void HMI::StatusLED::LED_EM_TOP() {
+    std_msgs::msg::Bool msg;
+    msg.data = true;
+
+    switch (current_led_em_top_state) {
+        case MirrorTopState::EM_TOP_LED_OFF:
+            if (em_pos_vert_top_value) {
+                led_em_top_on->publish(msg);
+                current_led_em_top_state = MirrorTopState::EM_TOP_LED_ON;
+            } 
+            break;
+
+        case MirrorTopState::EM_TOP_LED_ON:
+            if (em_pos_vert_pend_value) {
+                led_em_top_off->publish(msg);
+                current_led_em_top_state = MirrorTopState::EM_TOP_LED_OFF;
+            } 
+            break;
+    }
+}
+
+void HMI::StatusLED::LED_EM_LEFT() {
+    std_msgs::msg::Bool msg;
+    msg.data = true;
+
+    switch (current_led_em_left_state) {
+        case MirrorLeftState::EM_LEFT_LED_OFF:
+            if (em_pos_hor_left_value) {
+                led_em_left_on->publish(msg);
+                current_led_em_left_state = MirrorLeftState::EM_LEFT_LED_ON;
+            } 
+            break;
+
+        case MirrorLeftState::EM_LEFT_LED_ON:
+            if (em_pos_hor_pend_value) {
+                led_em_left_off->publish(msg);
+                current_led_em_left_state = MirrorLeftState::EM_LEFT_LED_OFF;
+            } 
+            break;
+    }
+}
+
+void HMI::StatusLED::LED_EM_RIGHT() {
+    std_msgs::msg::Bool msg;
+    msg.data = true;
+
+    switch (current_led_em_right_state) {
+        case MirrorRightState::EM_RIGHT_LED_OFF:
+            if (em_pos_hor_right_value) {
+                std::cout << "ERROR 4" << std::endl;
+                led_em_right_on->publish(msg);
+                current_led_em_right_state = MirrorRightState::EM_RIGHT_LED_ON;
+            } 
+            break;
+
+        case MirrorRightState::EM_RIGHT_LED_ON:
+            if (em_pos_hor_pend_value) {
+                led_em_right_off->publish(msg);
+                current_led_em_right_state = MirrorRightState::EM_RIGHT_LED_OFF;
+            } 
+            break;
+    }
+}
+
+void HMI::StatusLED::LED_EM_BOTTOM() {
+    std_msgs::msg::Bool msg;
+    msg.data = true;
+
+    switch (current_led_em_bottom_state) {
+        case MirrorBottomState::EM_BOTTOM_LED_OFF:
+            if (em_pos_vert_bottom_value) {
+                led_em_bottom_on->publish(msg);
+                current_led_em_bottom_state = MirrorBottomState::EM_BOTTOM_LED_ON;
+            } 
+            break;
+
+        case MirrorBottomState::EM_BOTTOM_LED_ON:
+            if (em_pos_vert_pend_value) {
+                led_em_bottom_off->publish(msg);
+                current_led_em_bottom_state = MirrorBottomState::EM_BOTTOM_LED_OFF;
+            } 
+            break;
+    }
+}
+"""
+
+[[deltas]]
+type = "add"
+id = 5
+condition = { feature = "LED_EM", state = "active" }
+content = """
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr em_pos_ver_pend;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr em_pos_ver_bottom;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr em_pos_ver_top;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr em_pos_hor_pend;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr em_pos_hor_right;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr em_pos_hor_left;
+"""
+
+
+[[deltas]]
+type = "add"
+id = 6
+condition = { feature = "LED_EM", state = "active" }
+content = """
+em_pos_ver_pend = node->create_publisher<std_msgs::msg::Bool>("em_pos_vert_pend", 10);
+em_pos_ver_bottom = node->create_publisher<std_msgs::msg::Bool>("em_pos_vert_bottom", 10);
+em_pos_ver_top = node->create_publisher<std_msgs::msg::Bool>("em_pos_vert_top", 10);
+em_pos_hor_pend = node->create_publisher<std_msgs::msg::Bool>("em_pos_hor_pend", 10);
+em_pos_hor_right = node->create_publisher<std_msgs::msg::Bool>("em_pos_hor_right", 10);
+em_pos_hor_left = node->create_publisher<std_msgs::msg::Bool>("em_pos_hor_left", 10);
+"""
+
+[[deltas]]
+type = "change"
+id = 7
+condition = { feature = "LED_EM", state = "active" }
+content = """
+// Electric mirror with LEDs
+void DoorSystem::EM::processElectric() {
+    std_msgs::msg::Bool msg;
+    msg.data = true;
+
+    switch (current_em_state) {
+        case ElectricMirrorState::EM_TOP:
+            if (em_but_right_value) {
+                em_mv_right->publish(msg);
+                em_pos_hor_pend->publish(msg);
+            } else if (em_but_left_value) {
+                em_mv_left->publish(msg);
+                em_pos_hor_pend->publish(msg);
+            } else if (em_pos_left_value) {
+                em_pos_hor_left->publish(msg);
+                current_em_state = ElectricMirrorState::EM_TOP_LEFT;
+            } else if (em_pos_right_value) {
+                em_pos_hor_right->publish(msg);
+                current_em_state = ElectricMirrorState::EM_TOP_RIGHT;
+            } else if (em_but_down_value) {
+                em_mv_down->publish(msg);
+                em_pos_ver_pend->publish(msg);
+                current_em_state = ElectricMirrorState::EM_PENDING;
+            }
+            break;
+
+        case ElectricMirrorState::EM_TOP_LEFT:
+            if (em_but_right_value) {
+                em_mv_right->publish(msg);
+                em_pos_hor_pend->publish(msg);
+                current_em_state = ElectricMirrorState::EM_TOP;
+            } else if (em_but_down_value) {
+                em_mv_down->publish(msg);
+                em_pos_ver_pend->publish(msg);
+                current_em_state = ElectricMirrorState::EM_LEFT;
+            }
+            break;
+
+        case ElectricMirrorState::EM_LEFT:
+            if (em_but_up_value) {
+                em_mv_up->publish(msg);
+                em_pos_ver_pend->publish(msg);
+            } else if (em_but_down_value) {
+                em_mv_down->publish(msg);
+                em_pos_ver_pend->publish(msg);
+            } else if (em_pos_top_value) {
+                em_pos_ver_top->publish(msg);
+                current_em_state = ElectricMirrorState::EM_TOP_LEFT;
+            } else if (em_pos_bottom_value) {
+                em_pos_ver_bottom->publish(msg);
+                current_em_state = ElectricMirrorState::EM_BOTTOM_LEFT;
+            } else if (em_but_right_value) {
+                em_mv_right->publish(msg);
+                em_pos_hor_pend->publish(msg);
+                current_em_state = ElectricMirrorState::EM_PENDING;
+            }
+            break;
+
+        case ElectricMirrorState::EM_BOTTOM_LEFT:
+            if (em_but_up_value ) {
+                em_mv_up->publish(msg);
+                em_pos_ver_pend->publish(msg);
+                current_em_state = ElectricMirrorState::EM_LEFT;
+            } else if (em_but_right_value ) {
+                em_mv_right->publish(msg);
+                em_pos_hor_pend->publish(msg);
+                current_em_state = ElectricMirrorState::EM_BOTTOM;
+            }
+            break;
+
+        case ElectricMirrorState::EM_BOTTOM:
+            if (em_but_right_value) {
+                em_mv_right->publish(msg);
+                em_pos_hor_pend->publish(msg);
+            } else if (em_but_left_value) {
+                em_mv_left->publish(msg);
+                em_pos_hor_pend->publish(msg);
+            } else if (em_pos_left_value) {
+                em_pos_hor_left->publish(msg);
+                current_em_state = ElectricMirrorState::EM_BOTTOM_LEFT;
+            } else if (em_pos_right_value) {
+                em_pos_hor_right->publish(msg);
+                current_em_state = ElectricMirrorState::EM_BOTTOM_RIGHT;
+            } else if (em_but_up_value ) {
+                em_mv_up->publish(msg);
+                em_pos_ver_pend->publish(msg);
+                current_em_state = ElectricMirrorState::EM_PENDING;
+            }
+            break;
+            
+        case ElectricMirrorState::EM_BOTTOM_RIGHT:
+            if (em_but_left_value) {
+                em_mv_left->publish(msg);
+                em_pos_hor_pend->publish(msg);
+                current_em_state = ElectricMirrorState::EM_BOTTOM;
+            } else if (em_but_up_value) {
+                em_mv_up->publish(msg);
+                em_pos_ver_pend->publish(msg);
+                current_em_state = ElectricMirrorState::EM_RIGHT;
+            }
+            break;
+
+        case ElectricMirrorState::EM_RIGHT:
+            if (em_but_up_value) {
+                em_mv_up->publish(msg);
+                em_pos_ver_pend->publish(msg);
+            } else if (em_but_down_value) {
+                em_mv_down->publish(msg);
+                em_pos_ver_pend->publish(msg);
+            } else if (em_pos_top_value) {
+                em_pos_ver_top->publish(msg);
+                current_em_state = ElectricMirrorState::EM_TOP_RIGHT;
+            } else if (em_pos_bottom_value) {
+                em_pos_ver_bottom->publish(msg);
+                current_em_state = ElectricMirrorState::EM_BOTTOM_RIGHT;
+            } else if (em_but_left_value) {
+                em_mv_left->publish(msg);
+                em_pos_hor_pend->publish(msg);
+                current_em_state = ElectricMirrorState::EM_PENDING;
+            }
+            break;
+
+        case ElectricMirrorState::EM_TOP_RIGHT:
+            if (em_but_down_value ) {
+                em_mv_down->publish(msg);
+                em_pos_ver_pend->publish(msg);
+                current_em_state = ElectricMirrorState::EM_RIGHT;
+            } else if (em_but_left_value ) {
+                em_mv_left->publish(msg);
+                em_pos_hor_pend->publish(msg);
+                current_em_state = ElectricMirrorState::EM_TOP;
+            }
+            break;
+
+        case ElectricMirrorState::EM_PENDING:
+            if (em_but_up_value) {
+                em_mv_up->publish(msg);
+                em_pos_ver_pend->publish(msg);
+            } else if (em_but_down_value) {
+                em_mv_down->publish(msg);
+                em_pos_ver_pend->publish(msg);
+            } else if (em_but_right_value) {
+                em_mv_right->publish(msg);
+                em_pos_hor_pend->publish(msg);
+            } else if (em_but_left_value) {
+                em_mv_left->publish(msg);
+                em_pos_hor_pend->publish(msg);
+            } else if (em_pos_left_value) {
+                em_pos_hor_left->publish(msg);
+                current_em_state = ElectricMirrorState::EM_LEFT;
+            } else if (em_pos_right_value) {
+                em_pos_hor_right->publish(msg);
+                current_em_state = ElectricMirrorState::EM_RIGHT;
+            } else if (em_pos_top_value) {
+                em_pos_ver_top->publish(msg);
+                current_em_state = ElectricMirrorState::EM_TOP;
+            } else if (em_pos_bottom_value) {
+                em_pos_ver_bottom->publish(msg);
+                current_em_state = ElectricMirrorState::EM_BOTTOM;
+            } 
+            break;
+        
+    }
+}
+"""
+
+
+

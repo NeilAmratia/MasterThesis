@@ -1,0 +1,78 @@
+OPTION 1:
+# BCS framework along with BCS Simulator can run using Docker Images (simple and preferred way, but requires download of images from docker hub)
+
+## Prerequisites
+- Docker installed on your system
+- Access to Docker Hub
+
+## Steps to Use the Framework and Simulator
+
+### 1. Pull the Docker Images
+Pull the prebuilt Docker images from Docker Hub:
+```bash
+docker pull amratianeil/bcs_framework:latest
+docker pull amratianeil/bcs_simulator:latest
+
+### 2. create a network for interaction between the 2 docker containers
+create docker network:
+```bash
+docker network create bcs_network
+
+### 3. open a terminal to run the framework container:
+Start the BCS framework container interactively:
+```bash
+docker run -it --rm --network bcs_network amratianeil/bcs_framework:latest
+
+### 4. open another terminal to run the simulator container:
+Start the BCS simulator container interactively:
+```bash
+docker run -it --rm --net bcs_network -e DISPLAY=host.docker.internal:0.0 amratianeil/bcs_simulator:latest
+
+Congratulations!!!! you have both containers running now. Please follow the instructions mentioned in bcs_framework and bcs_simulator folder for details
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+OPTION 2:
+# BCS framework along with BCS Simulator can run using Docker files (requires some extra work and patience)
+
+## Prerequisites
+- Docker installed on your system
+- directories containing bcs_framework and bcs_simulator must be present in local drive
+
+## Steps to Use the Framework and Simulator
+
+### 1. Navigate to the Project Directory in this case to bcs_framework:
+Open a terminal and navigate to the directory containing your Dockerfile. For example:
+```bash
+cd /path/to/bcs_framework
+
+### 2. Build the Docker Image:
+```bash
+docker build -t bcs_framework:latest .
+
+### 3. Verify the Image Build:
+```bash
+docker images
+
+### 4. follow the same process from ### 1 to ### 3 for bcs_simulator in another terminal
+Start the BCS simulator container interactively:
+```bash
+cd /path/to/bcs_simulator
+docker build -t bcs_simulator:latest .
+
+### 5. create a network for interaction between the 2 docker containers
+create docker network:
+```bash
+docker network create bcs_network
+
+### 6. open a terminal to run the framework container:
+Start the BCS framework container interactively:
+```bash
+docker run -it --rm --network bcs_network bcs_framework:latest
+
+### 7. open another terminal to run the simulator container:
+Start the BCS simulator container interactively:
+```bash
+docker run -it --rm --net bcs_network -e DISPLAY=host.docker.internal:0.0 bcs_simulator:latest
+
+Congratulations!!!! you have both containers running now. Please follow the instructions mentioned in bcs_framework and bcs_simulator folder for details

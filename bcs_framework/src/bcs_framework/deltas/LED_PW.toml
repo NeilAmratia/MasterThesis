@@ -1,0 +1,368 @@
+[[deltas]]
+type = "add"
+id = 1
+condition = [
+    { feature = "LED_PW", state = "active" },
+    { feature = "Manual_PW", state = "active" }
+]
+content = """
+// Manual Window
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr pw_mv_dn;
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr pw_mv_up;
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr release_pw_but_sub;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr led_pw_up_on;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr led_pw_up_off;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr led_pw_dn_on;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr led_pw_dn_off;
+"""
+
+[[deltas]]
+type = "add"
+id = 2
+condition = [
+    { feature = "LED_PW", state = "active" },
+    { feature = "Automatic_PW", state = "active" }
+]
+content = """
+void LED_AutoPW_up();
+void LED_AutoPW_dn();
+"""
+
+[[deltas]]
+type = "add"
+id = 3
+condition = [
+    { feature = "LED_PW", state = "active" },
+    { feature = "CLS", state = "inactive" },
+    { feature = "Automatic_PW", state = "active" }
+]
+content = """
+// Automatic Window
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr pw_auto_mv_dn;
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr pw_auto_mv_up;
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr pw_auto_mv_stop;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr led_pw_up_on;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr led_pw_up_off;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr led_pw_dn_on;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr led_pw_dn_off;
+bool pw_auto_mv_dn_value = false;
+bool pw_auto_mv_up_value = false;
+bool pw_auto_mv_stop_value = false;
+enum class AutoPWUpState {
+    AUTOPW_UP_LED_OFF,
+    AUTOPW_UP_LED_ON
+};
+AutoPWUpState current_led_AutoPW_up_state = AutoPWUpState::AUTOPW_UP_LED_OFF;
+enum class AutoPWDnState {
+    AUTOPW_DN_LED_OFF,
+    AUTOPW_DN_LED_ON
+};
+AutoPWDnState current_led_AutoPW_dn_state = AutoPWDnState::AUTOPW_DN_LED_OFF;
+"""
+
+[[deltas]]
+type = "add"
+id = 4
+condition = [
+    { feature = "LED_PW", state = "active" },
+    { feature = "Manual_PW", state = "active" }
+]
+content = """
+// Manual Window
+led_pw_up_on = node->create_publisher<std_msgs::msg::Bool>("led_pw_up_on", 10);
+led_pw_up_off = node->create_publisher<std_msgs::msg::Bool>("led_pw_up_off", 10);
+led_pw_dn_on = node->create_publisher<std_msgs::msg::Bool>("led_pw_dn_on", 10);
+led_pw_dn_off = node->create_publisher<std_msgs::msg::Bool>("led_pw_dn_off", 10);
+pw_mv_dn = node->create_subscription<std_msgs::msg::Bool>(
+    "pw_mv_dn", 10,
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        std_msgs::msg::Bool new_msg;
+        new_msg.data = msg->data;
+        led_pw_dn_on->publish(new_msg);
+    }
+);
+pw_mv_up = node->create_subscription<std_msgs::msg::Bool>(
+    "pw_mv_up", 10,
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        std_msgs::msg::Bool new_msg;
+        new_msg.data = msg->data;
+        led_pw_up_on->publish(new_msg);
+    }
+);
+release_pw_but_sub = node->create_subscription<std_msgs::msg::Bool>(
+    "release_pw_but", 10,
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        std::cout << "ERROR 15" << std::endl;
+        std_msgs::msg::Bool new_msg;
+        new_msg.data = msg->data;
+        led_pw_up_off->publish(new_msg);
+        led_pw_dn_off->publish(new_msg);
+    }
+);
+"""
+
+[[deltas]]
+type = "add"
+id = 5
+condition = [
+    { feature = "LED_PW", state = "active" },
+    { feature = "Automatic_PW", state = "active" }
+]
+content = """
+// Automatic Window
+pw_auto_mv_dn = node->create_subscription<std_msgs::msg::Bool>(
+    "pw_auto_mv_dn", 10,
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        pw_auto_mv_dn_value = msg->data;
+        LED_AutoPW_dn();
+    }
+);
+pw_auto_mv_up = node->create_subscription<std_msgs::msg::Bool>(
+    "pw_auto_mv_up", 10,
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        pw_auto_mv_up_value = msg->data;
+        LED_AutoPW_up();
+    }
+);
+pw_auto_mv_stop = node->create_subscription<std_msgs::msg::Bool>(
+    "pw_auto_mv_stop", 10,
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        pw_auto_mv_stop_value = msg->data;
+        LED_AutoPW_up();
+        LED_AutoPW_dn();
+    }
+);
+
+led_pw_up_on = node->create_publisher<std_msgs::msg::Bool>("led_pw_up_on", 10);
+led_pw_up_off = node->create_publisher<std_msgs::msg::Bool>("led_pw_up_off", 10);
+led_pw_dn_on = node->create_publisher<std_msgs::msg::Bool>("led_pw_dn_on", 10);
+led_pw_dn_off = node->create_publisher<std_msgs::msg::Bool>("led_pw_dn_off", 10);
+"""
+
+[[deltas]]
+type = "add"
+id = 6
+condition = [
+    { feature = "LED_PW", state = "active" },
+    { feature = "CLS", state = "inactive" },
+    { feature = "Automatic_PW", state = "active" }
+]
+content = """
+void HMI::StatusLED::LED_AutoPW_up() {
+    std_msgs::msg::Bool msg;
+    msg.data = true;
+
+    switch (current_led_AutoPW_up_state) {
+        case AutoPWUpState::AUTOPW_UP_LED_OFF:
+            if (pw_auto_mv_up_value ) {
+                led_pw_up_on->publish(msg);
+                current_led_AutoPW_up_state = AutoPWUpState::AUTOPW_UP_LED_ON;
+            } 
+            break;
+
+        case AutoPWUpState::AUTOPW_UP_LED_ON:
+            if (pw_auto_mv_stop_value) {
+                std::cout << "ERROR 16" << std::endl;
+                led_pw_up_off->publish(msg);
+                current_led_AutoPW_up_state = AutoPWUpState::AUTOPW_UP_LED_OFF;
+            } 
+            break;
+    }
+}
+
+void HMI::StatusLED::LED_AutoPW_dn() {
+    std_msgs::msg::Bool msg;
+    msg.data = true;
+
+    switch (current_led_AutoPW_dn_state) {
+        case AutoPWDnState::AUTOPW_DN_LED_OFF:
+            if (pw_auto_mv_dn_value) {
+                led_pw_dn_on->publish(msg);
+                current_led_AutoPW_dn_state = AutoPWDnState::AUTOPW_DN_LED_ON;
+            } 
+            break;
+
+        case AutoPWDnState::AUTOPW_DN_LED_ON:
+            if (pw_auto_mv_stop_value) {
+                led_pw_dn_off->publish(msg);
+                current_led_AutoPW_dn_state = AutoPWDnState::AUTOPW_DN_LED_OFF;
+            } 
+            break;
+    }
+}
+"""
+
+[[deltas]]
+type = "add"
+id = 7
+condition = [
+    { feature = "LED_PW", state = "active" },
+    { feature = "Manual_PW", state = "active" }
+]
+content = """
+// Manual Window and LED Manual Window
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr release_pw_but_dn;
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr release_pw_but_up;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr release_pw_but;
+"""
+
+[[deltas]]
+type = "add"
+id = 8
+condition = [
+    { feature = "LED_PW", state = "active" },
+    { feature = "Manual_PW", state = "active" }
+]
+content = """
+// Manual Window and LED Manual Window
+release_pw_but = node->create_publisher<std_msgs::msg::Bool>("release_pw_but", 10);
+release_pw_but_dn = node->create_subscription<std_msgs::msg::Bool>(
+    "release_pw_but_dn", 10,
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        std_msgs::msg::Bool new_msg;
+        new_msg.data = msg->data;
+        release_pw_but->publish(new_msg);
+    }
+);
+release_pw_but_up = node->create_subscription<std_msgs::msg::Bool>(
+    "release_pw_but_up", 10,
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        std_msgs::msg::Bool new_msg;
+        new_msg.data = msg->data;
+        release_pw_but->publish(new_msg);
+    }
+);
+"""
+
+[[deltas]]
+type = "add"
+id = 9
+condition = [
+    { feature = "LED_PW", state = "active" },
+    { feature = "CLS", state = "active" },
+    { feature = "Automatic_PW", state = "active" }
+]
+content = """
+// Automatic Window with CLS
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr pw_auto_mv_dn;
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr pw_auto_mv_up;
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr pw_auto_mv_stop;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr led_pw_up_on;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr led_pw_up_off;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr led_pw_dn_on;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr led_pw_dn_off;
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr cls_lock_2;
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr cls_unlock_2;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr led_pw_cls_up_on;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr led_pw_cls_up_off;
+bool pw_auto_mv_dn_value = false;
+bool pw_auto_mv_up_value = false;
+bool pw_auto_mv_stop_value = false;
+bool cls_lock_2_value = false;
+bool cls_unlock_2_value = true;
+enum class AutoPWUpState {
+    AUTOPW_UP_LED_OFF,
+    AUTOPW_UP_LED_ON,
+    AUTOPW_UP_CLS_LED_ON
+};
+AutoPWUpState current_led_AutoPW_up_state = AutoPWUpState::AUTOPW_UP_LED_OFF;
+enum class AutoPWDnState {
+    AUTOPW_DN_LED_OFF,
+    AUTOPW_DN_LED_ON
+};
+AutoPWDnState current_led_AutoPW_dn_state = AutoPWDnState::AUTOPW_DN_LED_OFF;
+"""
+
+[[deltas]]
+type = "add"
+id = 10
+condition = [
+    { feature = "LED_PW", state = "active" },
+    { feature = "CLS", state = "active" },
+    { feature = "Automatic_PW", state = "active" }
+]
+content = """
+cls_lock_2 = node->create_subscription<std_msgs::msg::Bool>(
+    "cls_lock", 10,
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        cls_lock_2_value = msg->data;
+        cls_lock_2_value = true;
+        cls_unlock_2_value = false;
+        LED_AutoPW_up();
+    }
+);
+cls_unlock_2 = node->create_subscription<std_msgs::msg::Bool>(
+    "cls_unlock", 10,
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        cls_unlock_2_value = msg->data;
+        cls_lock_2_value = false;
+        cls_unlock_2_value = true;
+        LED_AutoPW_up();
+    }
+);
+led_pw_cls_up_on = node->create_publisher<std_msgs::msg::Bool>("led_pw_cls_up_on", 10);
+led_pw_cls_up_off = node->create_publisher<std_msgs::msg::Bool>("led_pw_cls_up_off", 10);
+"""
+
+[[deltas]]
+type = "add"
+id = 11
+condition = [
+    { feature = "LED_PW", state = "active" },
+    { feature = "CLS", state = "active" },
+    { feature = "Automatic_PW", state = "active" }
+]
+content = """
+void HMI::StatusLED::LED_AutoPW_up() {
+    std_msgs::msg::Bool msg;
+    msg.data = true;
+
+    switch (current_led_AutoPW_up_state) {
+        case AutoPWUpState::AUTOPW_UP_LED_OFF:
+            if (pw_auto_mv_up_value && cls_unlock_2_value) {
+                led_pw_up_on->publish(msg);
+                current_led_AutoPW_up_state = AutoPWUpState::AUTOPW_UP_LED_ON;
+            } else if (pw_auto_mv_up_value && cls_lock_2_value) {
+                std::cout << "ERROR 11" << std::endl;
+                led_pw_cls_up_on->publish(msg);
+                current_led_AutoPW_up_state = AutoPWUpState::AUTOPW_UP_CLS_LED_ON;
+            }
+            break;
+
+        case AutoPWUpState::AUTOPW_UP_LED_ON:
+            if (pw_auto_mv_stop_value) {
+                led_pw_up_off->publish(msg);
+                current_led_AutoPW_up_state = AutoPWUpState::AUTOPW_UP_LED_OFF;
+            } 
+            break;
+            
+        case AutoPWUpState::AUTOPW_UP_CLS_LED_ON:
+            if (pw_auto_mv_stop_value) {
+                led_pw_cls_up_off->publish(msg);
+                current_led_AutoPW_up_state = AutoPWUpState::AUTOPW_UP_LED_OFF;
+            } 
+            break;
+    }
+}
+
+void HMI::StatusLED::LED_AutoPW_dn() {
+    std_msgs::msg::Bool msg;
+    msg.data = true;
+
+    switch (current_led_AutoPW_dn_state) {
+        case AutoPWDnState::AUTOPW_DN_LED_OFF:
+            if (pw_auto_mv_dn_value) {
+                led_pw_dn_on->publish(msg);
+                current_led_AutoPW_dn_state = AutoPWDnState::AUTOPW_DN_LED_ON;
+            } 
+            break;
+
+        case AutoPWDnState::AUTOPW_DN_LED_ON:
+            if (pw_auto_mv_stop_value) {
+                led_pw_dn_off->publish(msg);
+                current_led_AutoPW_dn_state = AutoPWDnState::AUTOPW_DN_LED_OFF;
+            } 
+            break;
+    }
+}
+"""

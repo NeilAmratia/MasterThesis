@@ -1,0 +1,52 @@
+[[deltas]]
+type = "add"
+id = 1
+condition = { feature = "AS", state = "active" }
+content = """
+// Alarm
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr deactivate_as;
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr activate_as;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr as_activated;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr as_deactivated;
+"""
+
+[[deltas]]
+type = "add"
+id = 2
+condition = { feature = "AS", state = "active" }
+content = """
+// Alarm
+as_activated = node->create_publisher<std_msgs::msg::Bool>("as_activated", 10);
+as_deactivated = node->create_publisher<std_msgs::msg::Bool>("as_deactivated", 10);
+deactivate_as = node->create_subscription<std_msgs::msg::Bool>(
+    "deactivate_as", 10,
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        std_msgs::msg::Bool new_msg;
+        new_msg.data = msg->data;
+        as_deactivated->publish(new_msg);
+    }
+);
+activate_as = node->create_subscription<std_msgs::msg::Bool>(
+    "activate_as", 10,
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        std_msgs::msg::Bool new_msg;
+        new_msg.data = msg->data;
+        as_activated->publish(new_msg);
+    }
+);
+"""
+[[deltas]]
+type = "delete"
+id = 3
+condition = { feature = "AS", state = "inactive" }
+
+
+[[deltas]]
+type = "delete"
+id = 4
+condition = { feature = "AS", state = "inactive" }
+
+[[deltas]]
+type = "delete"
+id = 5
+condition = { feature = "AS", state = "inactive" }

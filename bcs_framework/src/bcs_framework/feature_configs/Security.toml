@@ -1,0 +1,42 @@
+[feature_delta_files]
+AS = "deltas/AS.toml"
+Control_AS = "deltas/Control_AS.toml"
+Interior_Monitoring = "deltas/Interior_Monitoring.toml"
+CLS = "deltas/CLS.toml"
+Automatic_Locking = "deltas/Automatic_Locking.toml"
+RCK = "deltas/RCK.toml"
+Control_Automatic_PW = "deltas/Control_Automatic_PW.toml"
+Safety_Function = "deltas/Safety_Function.toml"
+
+[[feature_dependencies]]
+feature = "AS"
+requires = []
+
+[[feature_dependencies]]
+feature = "Control_AS"
+requires = []
+
+[[feature_dependencies]]
+feature = "Interior_Monitoring"
+requires = ["StatusLED"]
+
+[[feature_dependencies]]
+feature = "CLS"
+requires = []
+
+[[feature_dependencies]]
+feature = "Automatic_Locking"
+requires = []
+
+[[feature_dependencies]]
+feature = "RCK"
+requires = []
+
+[[feature_dependencies]]
+feature = "Safety_Function"
+requires = []
+
+[[feature_dependencies]]
+feature = "Control_Automatic_PW"
+requires = []
+

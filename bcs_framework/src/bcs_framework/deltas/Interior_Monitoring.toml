@@ -1,0 +1,56 @@
+[[deltas]]
+type = "add"
+id = 1
+condition = { feature = "Interior_Monitoring", state = "active" }
+content = """
+// Interior Monitoring Compoenents
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr im_alarm_detected;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr as_im_alarm_on;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr as_im_alarm_off;
+bool im_alarm_detected_value = false;
+"""
+
+[[deltas]]
+type = "add"
+id = 2
+condition = { feature = "Interior_Monitoring", state = "active" }
+content = """
+// Interior Monitoring Compoenents 
+im_alarm_detected = node->create_subscription<std_msgs::msg::Bool>(
+    "im_alarm_detected", 10,
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        im_alarm_detected_value = msg->data;
+        alarmSystem();
+        im_alarm_detected_value = false;
+    }
+);
+as_im_alarm_on = node->create_publisher<std_msgs::msg::Bool>("as_im_alarm_on", 10);
+as_im_alarm_off = node->create_publisher<std_msgs::msg::Bool>("as_im_alarm_off", 10);
+"""
+[[deltas]]
+type = "add"
+id = 3
+condition = { feature = "Interior_Monitoring", state = "active" }
+content = """
+else if (im_alarm_detected_value) {
+    std::cout << "ERROR 5" << std::endl;
+    as_im_alarm_on->publish(msg);
+    current_alarm_system_state = AlarmSystemState::AS_ALARM;
+}
+"""
+
+[[deltas]]
+type = "add"
+id = 4
+condition = { feature = "Interior_Monitoring", state = "active" }
+content = """
+as_im_alarm_off->publish(msg);
+"""
+
+[[deltas]]
+type = "add"
+id = 5
+condition = { feature = "Interior_Monitoring", state = "active" }
+content = """
+as_im_alarm_off->publish(msg);
+"""

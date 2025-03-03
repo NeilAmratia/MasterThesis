@@ -1,0 +1,284 @@
+[[deltas]]
+type = "change"
+id = 1
+condition = { feature = "Automatic_PW", state = "active" }
+content = """
+// Automatic window
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr pw_auto_mv_up;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr pw_auto_mv_dn;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr pw_auto_mv_stop;
+bool pw_auto_mv_up_state_;
+bool pw_auto_mv_dn_state_;
+bool pw_auto_mv_stop_state_;
+"""
+
+[[deltas]]
+type = "change"
+id = 2
+condition = { feature = "Automatic_PW", state = "active" }
+content = """
+void processAutomatic();
+"""
+[[deltas]]
+type = "change"
+id = 3
+condition = { feature = "Automatic_PW", state = "active" }
+content = """
+// Automatic window
+pw_auto_mv_up = node->create_publisher<std_msgs::msg::Bool>("pw_auto_mv_up", 10);
+pw_auto_mv_dn = node->create_publisher<std_msgs::msg::Bool>("pw_auto_mv_dn", 10);
+pw_auto_mv_stop = node->create_publisher<std_msgs::msg::Bool>("pw_auto_mv_stop", 10);
+"""
+
+[[deltas]]
+type = "change"
+id = 4
+condition = [
+    { feature = "CLS", state = "inactive" },
+    { feature = "Automatic_PW", state = "active" }
+]
+content = """
+void DoorSystem::PW::processAutomatic() {
+    std_msgs::msg::Bool msg;
+    msg.data = true;
+
+    switch (current_window_state) {
+        case WindowState::PW_UP:
+            if (pw_but_dn_value /*&& pw_enabled == true*/) {
+                current_window_state = WindowState::PW_PEND;
+                pw_auto_mv_dn_state_ = true;
+                pw_auto_mv_stop_state_ = false;
+                pw_auto_mv_up_state_ = false;
+                pw_auto_mv_dn->publish(msg);
+            }
+            break;
+
+        case WindowState::PW_PEND:
+            if (pw_auto_mv_up_state_ && pw_pos_up_value) {
+                current_window_state = WindowState::PW_UP;
+                pw_auto_mv_dn_state_ = false;
+                pw_auto_mv_stop_state_ = true;
+                pw_auto_mv_up_state_ = false;
+                pw_auto_mv_stop->publish(msg);
+            } else if (pw_but_dn_value /*&& pw_enabled == true */&& pw_auto_mv_stop_state_) {
+                pw_auto_mv_dn_state_ = true;
+                pw_auto_mv_stop_state_ = false;
+                pw_auto_mv_up_state_ = false;
+                pw_auto_mv_dn->publish(msg);
+            } else if (pw_but_up_value && !fp_on_value && pw_auto_mv_stop_state_) {
+                pw_auto_mv_dn_state_ = false;
+                pw_auto_mv_stop_state_ = false;
+                pw_auto_mv_up_state_ = true;
+                pw_auto_mv_up->publish(msg);
+            } else if (pw_but_dn_value /*&& pw_enabled == true */&& pw_auto_mv_up_state_) {
+                pw_auto_mv_dn_state_ = false;
+                pw_auto_mv_stop_state_ = true;
+                pw_auto_mv_up_state_ = false;
+                pw_auto_mv_stop->publish(msg);
+            } else if (pw_but_up_value  && pw_auto_mv_dn_state_) {
+                pw_auto_mv_dn_state_ = false;
+                pw_auto_mv_stop_state_ = true;
+                pw_auto_mv_up_state_ = false;
+                pw_auto_mv_stop->publish(msg);
+            } else if (pw_auto_mv_dn_state_ && pw_pos_dn_value) {
+                pw_auto_mv_dn_state_ = false;
+                pw_auto_mv_stop_state_ = true;
+                pw_auto_mv_up_state_ = false;
+                pw_auto_mv_stop->publish(msg);
+                current_window_state = WindowState::PW_DN;
+            } else if ( fp_on_value && pw_auto_mv_up_state_) {
+                pw_auto_mv_dn_state_ = false;
+                pw_auto_mv_stop_state_ = true;
+                pw_auto_mv_stop->publish(msg);
+                pw_auto_mv_up_state_ = false;
+                current_window_state = WindowState::PW_PEND;
+            } 
+            break;
+
+        case WindowState::PW_DN:
+            if (pw_but_up_value && !fp_on_value) {
+                pw_auto_mv_dn_state_ = false;
+                pw_auto_mv_stop_state_ = false;
+                pw_auto_mv_up_state_ = true;
+                current_window_state = WindowState::PW_PEND;
+                pw_auto_mv_up->publish(msg);
+            }
+            break;
+    }
+}
+"""
+
+[[deltas]]
+type = "change"
+id = 5
+condition = { feature = "Automatic_PW", state = "active" }
+content = """
+processAutomatic();
+"""
+
+[[deltas]]
+type = "change"
+id = 6
+condition = { feature = "Automatic_PW", state = "active" }
+content = """
+processAutomatic();
+"""
+
+[[deltas]]
+type = "change"
+id = 7
+condition = { feature = "Automatic_PW", state = "active" }
+content = """
+if (finger_detected_value) {
+  current_fp_state = FingerProtectionState::FP_ON;
+  msg.data = true;
+  pw_auto_mv_stop->publish(msg);
+  fp_on->publish(msg);
+  msg.data = false;
+  fp_off->publish(msg);
+} 
+"""
+
+[[deltas]]
+type = "change"
+id = 8
+condition = { feature = "Automatic_PW", state = "active" }
+content = """
+processAutomatic();
+"""
+
+[[deltas]]
+type = "change"
+id = 9
+condition = { feature = "Automatic_PW", state = "active" }
+content = """
+processAutomatic();
+"""
+
+[[deltas]]
+type = "add"
+id = 10
+condition = { feature = "Automatic_PW", state = "active" }
+content = """
+processAutomatic();
+pw_pos_up_value = false;
+"""
+
+[[deltas]]
+type = "add"
+id = 11
+condition = { feature = "Automatic_PW", state = "active" }
+content = """
+processAutomatic();
+pw_pos_dn_value = false;
+"""
+
+[[deltas]]
+type = "change"
+id = 12
+condition = [
+    { feature = "CLS", state = "active" },
+    { feature = "Automatic_PW", state = "active" }
+]
+content = """
+void DoorSystem::PW::processAutomatic() {
+    std_msgs::msg::Bool msg;
+    msg.data = true;
+
+    switch (current_window_state) {
+        case WindowState::PW_UP:
+            if (pw_but_dn_value && pw_enabled_state_) {
+                current_window_state = WindowState::PW_PEND;
+                pw_auto_mv_dn_state_ = true;
+                pw_auto_mv_stop_state_ = false;
+                pw_auto_mv_up_state_ = false;
+                pw_auto_mv_dn->publish(msg);
+            }
+            break;
+
+        case WindowState::PW_PEND:
+            if (pw_auto_mv_up_state_ && pw_pos_up_value) {
+                current_window_state = WindowState::PW_UP;
+                pw_auto_mv_dn_state_ = false;
+                pw_auto_mv_stop_state_ = true;
+                pw_auto_mv_up_state_ = false;
+                pw_auto_mv_stop->publish(msg);
+            } else if (pw_but_dn_value && pw_enabled_state_ && pw_auto_mv_stop_state_) {
+                pw_auto_mv_dn_state_ = true;
+                pw_auto_mv_stop_state_ = false;
+                pw_auto_mv_up_state_ = false;
+                pw_auto_mv_dn->publish(msg);
+            } else if (pw_but_up_value && !fp_on_value && pw_auto_mv_stop_state_) {
+                pw_auto_mv_dn_state_ = false;
+                pw_auto_mv_stop_state_ = false;
+                pw_auto_mv_up_state_ = true;
+                pw_auto_mv_up->publish(msg);
+            } else if (pw_but_dn_value && pw_enabled_state_ && pw_auto_mv_up_state_) {
+                pw_auto_mv_dn_state_ = false;
+                pw_auto_mv_stop_state_ = true;
+                pw_auto_mv_up_state_ = false;
+                pw_auto_mv_stop->publish(msg);
+            } else if (pw_but_up_value  && pw_auto_mv_dn_state_) {
+                pw_auto_mv_dn_state_ = false;
+                pw_auto_mv_stop_state_ = true;
+                pw_auto_mv_up_state_ = false;
+                pw_auto_mv_stop->publish(msg);
+            } else if (pw_auto_mv_dn_state_ && pw_pos_dn_value) {
+                pw_auto_mv_dn_state_ = false;
+                pw_auto_mv_stop_state_ = true;
+                pw_auto_mv_up_state_ = false;
+                pw_auto_mv_stop->publish(msg);
+                current_window_state = WindowState::PW_DN;
+            } else if ( !pw_enabled_state_) {
+                std::cout << "ERROR 2" << std::endl;
+                pw_auto_mv_dn_state_ = false;
+                pw_auto_mv_stop_state_ = false;
+                pw_auto_mv_stop->publish(msg);
+                pw_auto_mv_up_state_ = true;
+                pw_auto_mv_up->publish(msg);
+                current_window_state = WindowState::PW_PEND;
+            } else if ( fp_on_value && pw_auto_mv_up_state_) {
+                std::cout << "ERROR 14" << std::endl;
+                pw_auto_mv_dn_state_ = false;
+                pw_auto_mv_stop_state_ = true;
+                pw_auto_mv_stop->publish(msg);
+                pw_auto_mv_up_state_ = false;
+                current_window_state = WindowState::PW_PEND;
+            } 
+            break;
+
+        case WindowState::PW_DN:
+            if (pw_but_up_value && !fp_on_value) {
+                pw_auto_mv_dn_state_ = false;
+                pw_auto_mv_stop_state_ = false;
+                pw_auto_mv_up_state_ = true;
+                current_window_state = WindowState::PW_PEND;
+                pw_auto_mv_up->publish(msg);
+            } else if ( !pw_enabled_state_) {
+                pw_auto_mv_dn_state_ = false;
+                pw_auto_mv_stop_state_ = false;
+                pw_auto_mv_stop->publish(msg);
+                pw_auto_mv_up_state_ = true;
+                pw_auto_mv_up->publish(msg);
+                current_window_state = WindowState::PW_PEND;
+            } 
+            break;
+    }
+}
+"""
+
+[[deltas]]
+type = "add"
+id = 13
+condition = { feature = "Automatic_PW", state = "active" }
+content = """
+processAutomatic();
+"""
+
+[[deltas]]
+type = "add"
+id = 14
+condition = { feature = "Automatic_PW", state = "active" }
+content = """
+processAutomatic();
+"""

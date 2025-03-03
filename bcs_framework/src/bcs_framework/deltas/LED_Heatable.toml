@@ -1,0 +1,78 @@
+[[deltas]]
+type = "add"
+id = 1
+condition = { feature = "LED_Heatable", state = "active" }
+content = """
+void LED_Heatable();
+"""
+
+[[deltas]]
+type = "add"
+id = 2
+condition = { feature = "LED_Heatable", state = "active" }
+content = """
+// LED Heatable
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr heating_on;
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr heating_off;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr led_em_heating_on;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr led_em_heating_off;
+bool heating_on_value = false;
+bool heating_off_value = false;
+enum class MirrorHeatingState {
+    EM_HEATING_LED_OFF,
+    EM_HEATING_LED_ON
+};
+MirrorHeatingState current_led_em_heating_state = MirrorHeatingState::EM_HEATING_LED_OFF;
+"""
+[[deltas]]
+type = "add"
+id = 3
+condition = { feature = "LED_Heatable", state = "active" }
+content = """
+// LED Heatable
+heating_on = node->create_subscription<std_msgs::msg::Bool>(
+    "heating_on", 10,
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        heating_on_value = msg->data;
+        heating_off_value = false;
+        LED_Heatable();
+    }
+);
+heating_off = node->create_subscription<std_msgs::msg::Bool>(
+    "heating_off", 10,
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        heating_off_value = msg->data;
+        heating_on_value = false;
+        LED_Heatable();
+    }
+);
+led_em_heating_on = node->create_publisher<std_msgs::msg::Bool>("led_em_heating_on", 10);
+led_em_heating_off = node->create_publisher<std_msgs::msg::Bool>("led_em_heating_off", 10);
+"""
+
+[[deltas]]
+type = "add"
+id = 4
+condition = { feature = "LED_Heatable", state = "active" }
+content = """
+void HMI::StatusLED::LED_Heatable() {
+    std_msgs::msg::Bool msg;
+    msg.data = true;
+
+    switch (current_led_em_heating_state) {
+        case MirrorHeatingState::EM_HEATING_LED_OFF:
+            if (heating_on_value) {
+                led_em_heating_on->publish(msg);
+                current_led_em_heating_state = MirrorHeatingState::EM_HEATING_LED_ON;
+            } 
+            break;
+
+        case MirrorHeatingState::EM_HEATING_LED_ON:
+            if (heating_off_value) {
+                led_em_heating_off->publish(msg);
+                current_led_em_heating_state = MirrorHeatingState::EM_HEATING_LED_OFF;
+            } 
+            break;
+    }
+}
+"""

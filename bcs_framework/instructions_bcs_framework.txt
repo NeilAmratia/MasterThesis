@@ -1,0 +1,34 @@
+# Instructions to Run the bcs_framework Docker File in an Interactive Window
+
+Step 1: Start the Docker Container (please see the instructions present in the parent folder):
+- docker run -it --rm --network bcs_network amratianeil/bcs_framework:latest
+
+Step 2: Build and Source the bcs_framework Package:
+- cd /ros2_ws
+- colcon build --packages-select bcs_framework
+- source install/setup.bash
+
+Step 3: Run the bcs_framework Applications
+Run the Feature Model Generator:
+- ros2 run bcs_framework feature_model_generator 
+
+The create_framework command can take an optional input configuration file. If no file is provided, it defaults to the configuration file located at: bcs_framework/src/bcs_framework/input_config/input_configuration.xml.
+
+To Use the Default Input Configuration File.
+Simply run:
+- ros2 run bcs_framework create_framework 
+
+To Provide a Custom Input Configuration File
+If you want to use your own input_configuration.xml, first copy the file to the container.
+On your host machine, run:
+- docker cp <path-to-your-input-configuration.xml> <container-id>:/ros2_ws/src/bcs_framework/input_config/
+- ros2 run bcs_framework create_framework /ros2_ws/src/bcs_framework/input_config/my_input_configuration.xml
+
+
+Step 4: Build and Source the active_configuration_files Package:
+- colcon build --packages-select active_configuration_files
+- source install/setup.bash
+- ros2 run active_configuration_files run_framework
+
+
+Please note that the active_configuration_files are only generated when the ros2 run create_framework command is run, so please follows the execution order as mentioned.

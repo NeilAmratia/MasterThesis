@@ -1,0 +1,61 @@
+[[deltas]]
+type = "add"
+id = 1
+condition = { feature = "Automatic_Locking", state = "active" }
+content = """
+// Automatic Locking Compoenents
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr car_drives;
+rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr door_open;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr car_lock;
+rclcpp::Publisher<std_msgs::msg::Bool>::SharedPtr car_unlock;
+bool car_drives_value = false;
+bool door_open_value = false;
+"""
+
+[[deltas]]
+type = "add"
+id = 2
+condition = { feature = "Automatic_Locking", state = "active" }
+content = """
+// Automatic Locking Compoenents
+car_drives = node->create_subscription<std_msgs::msg::Bool>(
+    "car_drives", 10,
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        car_drives_value = msg->data;
+        cls();
+    }
+);
+door_open = node->create_subscription<std_msgs::msg::Bool>(
+    "door_open", 10,
+    [this](const std_msgs::msg::Bool::SharedPtr msg) {
+        door_open_value = msg->data;
+        cls();
+    }
+);
+car_lock = node->create_publisher<std_msgs::msg::Bool>("car_lock", 10);
+car_unlock = node->create_publisher<std_msgs::msg::Bool>("car_unlock", 10);
+"""
+
+[[deltas]]
+type = "add"
+id = 3
+condition = { feature = "Automatic_Locking", state = "active" }
+content = """
+else if (car_drives_value) {
+    car_lock->publish(msg);
+    cls_lock->publish(msg);
+    current_cls_state = CentrolLockingSystemState::CLS_LOCK;
+} 
+"""
+
+[[deltas]]
+type = "add"
+id = 4
+condition = { feature = "Automatic_Locking", state = "active" }
+content = """
+else if (door_open_value) {
+    std::cout << "ERROR 10" << std::endl;
+    car_unlock->publish(msg);
+    current_cls_state = CentrolLockingSystemState::CLS_UNLOCK;
+}
+"""

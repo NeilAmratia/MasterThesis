@@ -1,0 +1,4 @@
+source;share/bcs_simulator/local_setup.bash
+source;share/bcs_simulator/local_setup.dsv
+source;share/bcs_simulator/local_setup.sh
+source;share/bcs_simulator/local_setup.zsh

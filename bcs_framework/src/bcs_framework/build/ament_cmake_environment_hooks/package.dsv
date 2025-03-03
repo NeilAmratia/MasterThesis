@@ -1,0 +1,4 @@
+source;share/bcs_framework/local_setup.bash
+source;share/bcs_framework/local_setup.dsv
+source;share/bcs_framework/local_setup.sh
+source;share/bcs_framework/local_setup.zsh

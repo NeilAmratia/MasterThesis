@@ -1,0 +1,13 @@
+/home/neil_amratia/bcs_simulator/src/bcs_simulator/build/CMakeFiles/uninstall.dir
+/home/neil_amratia/bcs_simulator/src/bcs_simulator/build/CMakeFiles/bcs_simulator_uninstall.dir
+/home/neil_amratia/bcs_simulator/src/bcs_simulator/build/CMakeFiles/bcs_simulator.dir
+/home/neil_amratia/bcs_simulator/src/bcs_simulator/build/CMakeFiles/bcs_test_suite.dir
+/home/neil_amratia/bcs_simulator/src/bcs_simulator/build/CMakeFiles/test.dir
+/home/neil_amratia/bcs_simulator/src/bcs_simulator/build/CMakeFiles/edit_cache.dir
+/home/neil_amratia/bcs_simulator/src/bcs_simulator/build/CMakeFiles/rebuild_cache.dir
+/home/neil_amratia/bcs_simulator/src/bcs_simulator/build/CMakeFiles/list_install_components.dir
+/home/neil_amratia/bcs_simulator/src/bcs_simulator/build/CMakeFiles/install.dir
+/home/neil_amratia/bcs_simulator/src/bcs_simulator/build/CMakeFiles/install/local.dir
+/home/neil_amratia/bcs_simulator/src/bcs_simulator/build/CMakeFiles/install/strip.dir
+/home/neil_amratia/bcs_simulator/src/bcs_simulator/build/CMakeFiles/bcs_simulator_autogen.dir
+/home/neil_amratia/bcs_simulator/src/bcs_simulator/build/CMakeFiles/bcs_test_suite_autogen.dir

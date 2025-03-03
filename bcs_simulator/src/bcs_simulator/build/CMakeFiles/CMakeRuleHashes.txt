@@ -1,0 +1,5 @@
+# Hashes of file build rules.
+5efe28716aeb27ef8fad1bf5fe0b077c CMakeFiles/bcs_simulator_autogen
+3f608c47a57ad9f44971062893c78863 CMakeFiles/bcs_simulator_uninstall
+424bf93615d888b30d239fa17cba0ca1 CMakeFiles/bcs_test_suite_autogen
+bf21d9c2609f5cc23618b28448e203a8 bcs_simulator_autogen/CCBC4FUR7J/qrc_qml.cpp
